@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import Cards from "../components/organisms/Cards";
 import { lists } from "../static/staticLists"
 import { Layout, Menu } from 'antd';
+import ButtonRedirect from "../components/atoms/ButtonRedirect"
+import HeaderDobbyLabs from "../components/organisms/HeaderDobbyLabs";
+import FooterDobbyLabs from "../components/organisms/FooterDobbyLabs";
 
 
 const MainPage = () => {
@@ -12,25 +15,18 @@ const MainPage = () => {
 
 
     return (
-        <Layout className="layout">
-            <Header className="header" >
-                <div className="dobby" style={{ float: 'left' }}> DOBBY LABS </div>
-                <div className="header-right">
-                    <a onClick={handleGoToListApplyPage} > Link01 </a>
-                    <a onClick={handleGoToListApplyPage} > Link02 </a>
-                    <a onClick={handleGoToListApplyPage} > Link03 </a>
-                </div>
-                {/* </Menu> */}
-            </Header>
-            <Content style={{ padding: '0 50px' }}>
+        <Layout>
+            <HeaderDobbyLabs />
+            <Content className="content">
                 <h1>DAO project - main page</h1>
 
-                <button onClick={handleGoToListApplyPage}>Apply new list</button>
+                <ButtonRedirect onClick={handleGoToListApplyPage}>Apply new list</ButtonRedirect>
 
                 <Cards data={lists}></Cards>
             </Content>
 
-            <Footer style={{ textAlign: 'center' }}> DOBBY LABS ©2021</Footer>
+            {/* <Footer style={{ textAlign: 'center' }}> DOBBY LABS ©2021</Footer> */}
+            <FooterDobbyLabs />
         </Layout>
     )
 };

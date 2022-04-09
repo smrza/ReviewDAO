@@ -8,4 +8,4 @@ const CardsWrapper = styled.div`
     justify-content: center;
 `;
 
-export default CardsWrapper;
+export default CardsWrapper

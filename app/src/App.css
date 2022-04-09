@@ -48,24 +48,6 @@
 
 @import "~antd/dist/antd.css";
 
-.trigger {
-  font-size: 18px;
-  line-height: 64px;
-  padding: 0 24px;
-  cursor: pointer;
-  transition: color 0.3s;
-}
-
-.trigger:hover {
-  color: #1890ff;
-}
-
-.logo {
-  color: white;
-  font-weight: bolder;
-  background: rgba(255, 255, 255, 0.2);
-}
-
 .site-layout .site-layout-background {
   background: #fff;
 }
@@ -76,44 +58,10 @@
   background: #fff;
 }
 
-#components-layout-demo-top .logo {
-  float: left;
-  width: 120px;
-  height: 31px;
-  margin: 16px 24px 16px 0;
-  background: rgba(255, 255, 255, 0.3);
+body {
+  background-color: #f0f2f5;
 }
 
-.ant-row-rtl #components-layout-demo-top .logo {
-  float: right;
-  margin: 16px 0 16px 24px;
-}
-
-.dobby {
-  float: left;
-  font-size: larger;
-  font-weight: bolder;
-}
-
-.header {
-  color: white;
-  width: 100%;
-  overflow: hidden;
-}
-
-.header-right {
-  float: right;
-  padding-left: 30px;
-  font-size: larger;
-  font-weight: bolder;
-}
-
-.header-right a {
-  margin-right: 30px;
-  color: white
-}
-
-.header-right a:hover {
-  color: #1890ff;
-  background-color: white;
+.content {
+  padding: 0 15%;
 }

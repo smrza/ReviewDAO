@@ -4,7 +4,9 @@ import { Layout } from 'antd';
 import { Button, Form, FormControl, InputGroup } from "react-bootstrap";
 import { useFormik } from 'formik'
 import { lists } from '../static/staticLists'
-
+import ButtonRedirect from "../components/atoms/ButtonRedirect";
+import HeaderDobbyLabs from "../components/organisms/HeaderDobbyLabs";
+import FooterDobbyLabs from "../components/organisms/FooterDobbyLabs";
 
 const AddListPage = () => {
     const { Header, Content, Footer } = Layout;
@@ -61,11 +63,13 @@ const AddListPage = () => {
 
     return (
         <Layout>
-            <Content style={{ padding: '0 50px' }}>
+            <HeaderDobbyLabs />
+
+            <Content className="content">
                 <h1>Apply item to the list "{listname}" </h1>
-                <button onClick={handleGoToListMainPage} >Go back to main page</button>
-                <button onClick={handleGoToListPage} style={{ marginLeft: '30px' }}> Go back to list page </button>
-                <button onClick={handleGoToItemsApplicantsPage} style={{ marginLeft: '30px' }}> Show applicants </button>
+                <ButtonRedirect onClick={handleGoToListMainPage} >Go back to main page</ButtonRedirect>
+                <ButtonRedirect onClick={handleGoToListPage} style={{ marginLeft: '30px' }}> Go back to list page </ButtonRedirect>
+                <ButtonRedirect onClick={handleGoToItemsApplicantsPage} style={{ marginLeft: '30px' }}> Show applicants </ButtonRedirect>
 
 
                 <form style={{ marginTop: '30px' }} onSubmit={formik.handleSubmit}>
@@ -106,6 +110,7 @@ const AddListPage = () => {
                     </Button>
                 </form>
             </Content>
+            <FooterDobbyLabs />
         </Layout>
     )
 

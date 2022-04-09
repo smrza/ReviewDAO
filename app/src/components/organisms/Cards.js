@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from 'antd';
-import CardsWrapper from '../layouts/CardsWrapper'
+import CardsWrapper from "../layouts/CardsWrapper"
 
 
 const Cards = ({ data }) => {

@@ -4,7 +4,9 @@ import { lists } from "../static/staticLists"
 import { Layout } from 'antd';
 import { Card } from 'antd';
 import CardsWrapper from '../components/layouts/CardsWrapper'
-
+import ButtonRedirect from '../components/atoms/ButtonRedirect';
+import HeaderDobbyLabs from '../components/organisms/HeaderDobbyLabs';
+import FooterDobbyLabs from '../components/organisms/FooterDobbyLabs';
 
 const ItemsApplicantsPage = () => {
     const { Header, Content, Footer } = Layout;
@@ -52,13 +54,15 @@ const ItemsApplicantsPage = () => {
 
     return (
         <Layout>
-            <Content style={{ padding: '0 50px' }}>
+            <HeaderDobbyLabs />
+
+            <Content className="content">
                 <h1>
                     Challenge/Vote for applicants in list "{listname}"
                 </h1>
 
-                <button onClick={handleGoToListMainPage}>Go back to main page</button>
-                <button onClick={handleGoToListPage} style={{ marginLeft: '30px' }}>Go back to list page</button>
+                <ButtonRedirect onClick={handleGoToListMainPage}>Go back to main page</ButtonRedirect>
+                <ButtonRedirect onClick={handleGoToListPage} style={{ marginLeft: '30px' }}>Go back to list page</ButtonRedirect>
 
                 <CardsWrapper>
                     {listApplicants.map((applicant, index) =>
@@ -80,6 +84,7 @@ const ItemsApplicantsPage = () => {
                     )}
                 </CardsWrapper>
             </Content>
+            <FooterDobbyLabs />
         </Layout>
     )
 

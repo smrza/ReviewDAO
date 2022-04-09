@@ -4,6 +4,9 @@ import { Layout } from 'antd';
 import { Button, Form, FormControl, InputGroup } from "react-bootstrap";
 import { useFormik } from 'formik'
 import { lists } from '../static/staticLists'
+import ButtonRedirect from "../components/atoms/ButtonRedirect";
+import HeaderDobbyLabs from "../components/organisms/HeaderDobbyLabs";
+import FooterDobbyLabs from "../components/organisms/FooterDobbyLabs";
 
 
 const ListApplyPage = () => {
@@ -50,10 +53,11 @@ const ListApplyPage = () => {
 
     return (
         <Layout>
-            <Content style={{ padding: '0 50px' }}>
-                <h1>Apply new list</h1>
-                <button onClick={handleGoToListMainPage}> Go back to main page </button>
+            <HeaderDobbyLabs />
 
+            <Content className="content">
+                <h1>Apply new list</h1>
+                <ButtonRedirect onClick={handleGoToListMainPage}> Go back to main page </ButtonRedirect>
 
                 <form style={{ marginTop: '30px' }} onSubmit={formik.handleSubmit}>
                     <InputGroup className="mb-4">
@@ -93,6 +97,7 @@ const ListApplyPage = () => {
                     </Button>
                 </form>
             </Content>
+            <FooterDobbyLabs />
         </Layout>
     )
 
