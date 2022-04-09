@@ -7,7 +7,6 @@ import { Layout } from 'antd';
 const MainPage = () => {
     const { Header, Content, Footer } = Layout;
 
-
     return (
         <Layout>
             <Content style={{ padding: '0 50px' }}>
