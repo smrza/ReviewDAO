@@ -1,19 +1,38 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "./extensions/IReviewDAOListMetadata.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../dao/ReviewDAOSettings.sol";
-import "../dao/ReviewDAO.sol";
-import "../polls/ReviewDAOPolls.sol";
 
-contract ReviewDAOList is IReviewDAOListMetadata, ReviewDAOPolls {
+contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
+    event _Application(bytes32 indexed hash, address indexed applicant);
+    event _ResolveListing(bytes32 indexed hash, bool whitelisted, address resolver);
+    event _Withdrawal(address indexed sender, uint256 timestamp, uint256 amount);
+    event _ListingModified(
+        bytes32 indexed hash, 
+        string name, 
+        bool whitelisted, 
+        string baseUri, 
+        address indexed creator, 
+        uint256 stake, 
+        uint256 challengerReward, 
+        uint256 timer, 
+        uint256 challengeId, 
+        bool challenged, 
+        uint256 statusId
+    );
+    event _ChallengeModified(uint256 indexed id, uint256 challengerReward, uint256 listingStake, uint256 challengerStake, uint256 votePrice, uint256 timer, address indexed challenger);
+    event _Banished(address indexed sender, bytes32 indexed hash, uint256 downvotes);
+
     string private _name;
     string private _baseUri;
     address private _creator;
 
     IERC20 private _token;
     address private _ReviewDAO;
-    ReviewDAOSettings private _settings;
+    IReviewDAOSettings private _settings;
 
     constructor(
         string memory name_, 
@@ -31,12 +50,17 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReviewDAOPolls {
         _settings = ReviewDAOSettings(ReviewDAOSettings_);
     }
 
+    function test() public view returns (uint256){
+        return _settings.getChallengeTimer();
+    }
+
     struct Listing {
         string name;
         bool whitelisted;
         string baseUri;
         address creator;
         uint256 stake;
+        uint256 challengerReward;
         uint256 timer;
         uint256 challengeId;
         bool challenged;
@@ -44,20 +68,18 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReviewDAOPolls {
     }
 
     struct Challenge {
-        //uint256 votersCount;
-        uint256 rewardPool;
-        uint256 stake;
-        //uint256 voteStake;
+        uint256 challengerReward;
+        uint256 listingStake;
+        uint256 challengerStake;
         uint256 votePrice;
         uint256 timer;
         address challenger;
         mapping(address => bool) accountVoted;
         mapping(address => bool) positiveNegativeVote;
-        mapping(address => bool) claimedReward;
     }  
 
     struct ListingStatus {
-        uint256 votes;
+        int256 votes;
         mapping(address => bool) accountVoted;
     }
 
@@ -65,8 +87,12 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReviewDAOPolls {
         uint256[] votedChallenges;
     }
 
+    struct Poll {
+        uint256 votesFor;
+        uint256 votesAgainst;
+    }    
+
     //hash32 ID from name
-    //bytes32[] listingIds;
     mapping(bytes32 => Listing) public listings;
     mapping(bytes32 => bool) public nameRegistered;
 
@@ -92,24 +118,28 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReviewDAOPolls {
         _;
         address owner = msg.sender;
         require(_token.allowance(owner, address(this)) >= cost_, "Allowance too low.");
-        bool sent = _token.transferFrom(owner, address(this), cost_);
-        require(sent, "Token transfer failed");
+        require(_token.transferFrom(owner, address(this), cost_),"Token transfer failed");
     }
 
     function applyListing(bytes32 listingId_, string memory name_, string memory baseUri_) 
         external 
         payable 
-        processRDTPayment(_settings.getListingPriceRDT())
+        processRDTPayment(_settings.getListingPriceRDT() + _settings.getListingChallengeRewardRDT())
     {
         require(!nameRegistered[listingId_], "This listing already exists.");
         require(msg.value == _settings.getListingPriceETH(), "Incorrect ETH sent.");
+
+        uint256 listingPriceRDT = _settings.getListingPriceRDT();
+        uint256 challengerPrice = _settings.getListingChallengeRewardRDT();
+        uint256 timeLeft = block.timestamp + _settings.getListingTimer();
         Listing memory listing = Listing({
             name: name_, 
             whitelisted: false, 
             baseUri: baseUri_, 
             creator: msg.sender, 
-            stake: _settings.getListingPriceRDT(), 
-            timer: block.timestamp + _settings.getListingTimer(), 
+            stake: listingPriceRDT, 
+            challengerReward: challengerPrice,
+            timer: timeLeft, 
             challengeId: 0,
             challenged: false,
             statusId: 0
@@ -117,6 +147,8 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReviewDAOPolls {
         listings[listingId_] = listing;
         payable(_ReviewDAO).transfer(msg.value);
         nameRegistered[listingId_] = true;
+        emit _Application(listingId_, msg.sender);
+        emit _ListingModified(listingId_, name_, false, baseUri_, msg.sender, listingPriceRDT, challengerPrice, timeLeft, 0, false, 0);
     } 
 
     function challengeListing(bytes32 listingId_) 
@@ -126,16 +158,39 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReviewDAOPolls {
     {
         require(!listings[listingId_].challenged, "This listing is already challenged.");
         require(!listings[listingId_].whitelisted, "This listing is whitelisted.");
+        require(listings[listingId_].timer >= block.timestamp, "Registration period is over.");
+        
         uint256 stake = listings[listingId_].stake;
+        uint256 reward = listings[listingId_].challengerReward;
         listings[listingId_].challenged = true;
         listings[listingId_].stake = 0;
+        listings[listingId_].challengerReward = 0;
         listings[listingId_].challengeId = challengeIds;
-        challenges[challengeIds].rewardPool = stake;
-        challenges[challengeIds].stake = stake;
-        challenges[challengeIds].votePrice = _settings.getListingVotePriceRDT();
-        challenges[challengeIds].timer = block.timestamp + _settings.getChallengeTimer();
+
+        emit _ListingModified(
+            listingId_, 
+            listings[listingId_].name, 
+            false, 
+            listings[listingId_].baseUri, 
+            listings[listingId_].creator, 
+            0, 
+            0, 
+            listings[listingId_].timer, 
+            challengeIds, 
+            true, 
+            0
+        );
+
+        uint256 votePrice = _settings.getListingVotePriceRDT();
+        uint256 timeLeft = block.timestamp + _settings.getChallengeTimer();
+        challenges[challengeIds].challengerReward = reward;
+        challenges[challengeIds].listingStake = stake;
+        challenges[challengeIds].challengerStake = stake;
+        challenges[challengeIds].votePrice = votePrice;
+        challenges[challengeIds].timer = timeLeft;
         challenges[challengeIds].challenger = msg.sender;
-        polls[challengeIds].active = true;    
+
+        emit _ChallengeModified(challengeIds, reward, stake, stake, votePrice, timeLeft, msg.sender);
         ++challengeIds;
     }
 
@@ -148,6 +203,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReviewDAOPolls {
         require(!challenges[id].accountVoted[msg.sender], "You already voted in this challenge.");
         ++polls[id].votesFor;
         challenges[id].positiveNegativeVote[msg.sender] = true;
+        challenges[id].accountVoted[msg.sender] = true;
         voters[msg.sender].votedChallenges.push(id);
     }
 
@@ -159,6 +215,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReviewDAOPolls {
         require(challenges[id].timer > block.timestamp, "Challenge is over.");
         require(!challenges[id].accountVoted[msg.sender], "You already voted in this challenge.");
         ++polls[id].votesAgainst;
+        challenges[id].accountVoted[msg.sender] = true;
         voters[msg.sender].votedChallenges.push(id);
     }
 
@@ -178,53 +235,142 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReviewDAOPolls {
         statuses[id].accountVoted[msg.sender] = true;
     }
 
-    function resolveChallengeResult(bytes32 listingId_) external {
-        uint256 id = listings[listingId_].challengeId;
-        require(polls[id].active, "Not an active challenge.");
-        require(challenges[id].timer <= block.timestamp, "Challenge not yet finished.");
-        //... todo
+    function resolveListing(bytes32 listingId_) external nonReentrant {
+        Listing storage listing = listings[listingId_];
+        require(!listing.whitelisted, "Listing is whitelisted.");
+        //listing is not challenged and registration period is over
+        bool result;
+        if(
+            listing.timer < block.timestamp
+            && !listing.challenged
+        ){
+            listing.whitelisted = true;
+            require(
+                _token.transfer(listing.creator, listing.challengerReward)
+                , "Transfer failed."
+            );
+            require(
+                _token.transfer(_ReviewDAO, listing.stake)
+                , "Transfer failed."
+            );
+            listing.stake = 0;
+            listing.challengerReward = 0;
+            listing.statusId = statusesIds;
+            ++statusesIds;
+            result = true;
+        }
+        //listing is challenged
+        else if(
+            listing.challenged
+        ){
+            if(
+                challenges[listing.challengeId].timer < block.timestamp
+            ){
+                Poll memory poll = polls[listing.challengeId];
+                //listing won
+                //in an unlikely case of challenge ending in draw, the benefit goes to the subject
+                if(
+                    poll.votesFor >= poll.votesAgainst
+                ){
+                    listing.whitelisted = true;
+                    require(
+                        _token.transfer(listing.creator, challenges[listing.challengeId].challengerReward)
+                        , "Transfer failed."
+                    );
+                    require(
+                        _token.transfer(_ReviewDAO, challenges[listing.challengeId].listingStake)
+                        , "Transfer failed."
+                    );
+                    listing.statusId = statusesIds;
+                    ++statusesIds;
+                    uint256 additional = challenges[listing.challengeId].challengerStake % poll.votesFor;
+                    require(
+                        _token.transfer(_ReviewDAO, additional)
+                        , "Transfer failed."
+                    );
+                    result = true;
+                }
+                //listing lost
+                else if(
+                    poll.votesAgainst > poll.votesFor
+                ){
+                    require(
+                        _token.transfer(challenges[listing.challengeId].challenger, challenges[listing.challengeId].challengerReward)
+                        , "Transfer failed."
+                    );
+                    require(
+                        _token.transfer(_ReviewDAO, challenges[listing.challengeId].challengerStake)
+                        , "Transfer failed."
+                    );
+                    nameRegistered[listingId_] = false;
+                    uint256 additional = challenges[listing.challengeId].listingStake % poll.votesAgainst;
+                    require(
+                        _token.transfer(_ReviewDAO, additional)
+                        , "Transfer failed."
+                    );
+                    result = false;
+                }
+            }
+        }
+        emit _ResolveListing(listingId_, result, msg.sender);
     }
 
-    function resolveListingPeriod(bytes32 listingId_) external {
-        Listing memory listing = listings[listingId_];
-        require(listing.timer <= block.timestamp, "Cannot register yet.");
-        require(!listing.challenged, "Cannot register yet.");
-        // ... todo
+    function claimRewards() external nonReentrant {
+        uint256 reward = getRewardBalance();
+        require(_token.transfer(msg.sender, reward), "Transfer failed.");
+        uint256 counter = 0;
+        uint256 length = 0;
+        for(uint i = voters[msg.sender].votedChallenges.length; i > 0; i--){
+            uint256 j = voters[msg.sender].votedChallenges[i-1];
+            if(challenges[j].timer >= block.timestamp){
+                ++length;
+            }
+        }
+        uint256[] memory tmp = new uint256[](length);
+        for(uint i = voters[msg.sender].votedChallenges.length; i > 0; i--){
+            uint256 j = voters[msg.sender].votedChallenges[i-1];
+            if(challenges[j].timer >= block.timestamp){
+                tmp[counter] = j;
+                ++counter;
+            }
+            voters[msg.sender].votedChallenges.pop();
+        }
+        require(voters[msg.sender].votedChallenges.length == 0, "Failed to claim rewards.");
+        voters[msg.sender].votedChallenges = tmp;
+        emit _Withdrawal(msg.sender, block.timestamp, reward);
     }
 
-    //function claimRewards()
-
-    //dont forget to remove all these challenges which they withdraw
     function getRewardBalance() public view returns(uint256) {
         uint256 rewardBalance = 0;
         for(uint i = voters[msg.sender].votedChallenges.length; i > 0; i--){
-            uint256 j = voters[msg.sender].votedChallenges[i];
-            rewardBalance += challenges[j].votePrice;
-
-            if(challenges[j].accountVoted[msg.sender] 
-                && !challenges[j].claimedReward[msg.sender] 
-                && challenges[j].positiveNegativeVote[msg.sender] 
-                && polls[j].votesFor >= polls[j].votesAgainst
+            uint256 j = voters[msg.sender].votedChallenges[i-1];
+            if(
+                challenges[j].timer < block.timestamp
             ){
-                rewardBalance += challenges[j].rewardPool / polls[j].votesFor;
+                rewardBalance += challenges[j].votePrice;
+                
+                if(challenges[j].accountVoted[msg.sender] 
+                    && challenges[j].positiveNegativeVote[msg.sender] 
+                    && polls[j].votesFor >= polls[j].votesAgainst
+                ){
+                    rewardBalance += challenges[j].challengerStake / polls[j].votesFor;
+                }
+                else if(challenges[j].accountVoted[msg.sender]
+                    && !challenges[j].positiveNegativeVote[msg.sender] 
+                    && polls[j].votesAgainst > polls[j].votesFor
+                ){
+                    rewardBalance += challenges[j].listingStake / polls[j].votesAgainst;
+                }
             }
-            else if(challenges[j].accountVoted[msg.sender]
-                && !challenges[j].claimedReward[msg.sender]
-                && !challenges[j].positiveNegativeVote[msg.sender] 
-                && polls[j].votesAgainst > polls[j].votesFor
-            ){
-                rewardBalance += challenges[j].rewardPool / polls[j].votesAgainst * 80 / 100; //20% goes to the challenger for his bravery
-            }
-
-            challenges
         }
+        return rewardBalance;
     }
 
     function banishListing(bytes32 listingId_) external {
-	//todo
+        require(statuses[listings[listingId_].statusId].votes < _settings.getBanishListingLimit());
+        delete listings[listingId_].whitelisted;
+        delete nameRegistered[listingId_];
     }
-
-
 
     function name() public view virtual override returns (string memory) {
         return _name;
@@ -237,6 +383,4 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReviewDAOPolls {
     function creator() public view virtual override returns (address) {
         return _creator;
     }
-    
-    //todo
 }
