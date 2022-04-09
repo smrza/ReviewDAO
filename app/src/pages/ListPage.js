@@ -13,6 +13,8 @@ const ListPage = () => {
     const navigate = useNavigate();
 
     const handleGoToListMainPage = () => navigate(`/`)
+    const handleGoToItemspplicantsPage = () => navigate(`../${listname}/applicants`)
+    const handleGoToItemApplyPage = () => navigate(`../${listname}/apply`)
 
     useEffect(() => {
         handleListSelect()
@@ -36,6 +38,8 @@ const ListPage = () => {
             <Content style={{ padding: '0 50px' }}>
                 <h1>List "{listname}"</h1>
                 <button onClick={handleGoToListMainPage}>Go back to main page</button>
+                <button onClick={handleGoToItemApplyPage} style={{ marginLeft: '30px' }}>Apply new item</button>
+                <button onClick={handleGoToItemspplicantsPage} style={{ marginLeft: '30px' }}>Vote for applicants</button>
 
                 <CardsWrapper>
                     {listItems.map((item, index) =>
