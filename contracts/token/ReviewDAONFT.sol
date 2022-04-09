@@ -23,7 +23,7 @@ contract RDNFT is Ownable, ERC721A, ReentrancyGuard {
   function pubsaleMint(uint256 quantity) external payable callerIsUser{
     require(numberMinted(msg.sender) + quantity <= maxMintAmountPerAddress, "Minting too many");
     require(msg.value == pubsalePrice * quantity, "Incorrect ETH");
-    require(totalSupply() + quantity <= collectionSize, "Sold out");
+    require(totalSupply() + quantity <= collectionSize, "Soldold out");
     _safeMint(msg.sender, quantity);
   }
 

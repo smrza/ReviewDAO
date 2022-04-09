@@ -55,43 +55,43 @@ contract ReviewDAOSettings is IReviewDAOSettings {
         return banishListingLimit;
     }
 
-    function modify_listingPriceRDT(uint256 newPrice_) external{
+    function modify_listingPriceRDT(uint256 newPrice_) internal{
         listingPriceRDT = newPrice_;
         emit _RDTListingPriceModified(newPrice_);
     }
 
-    function modify_listingChallengeRewardRDT(uint256 newPrice_) external{
+    function modify_listingChallengeRewardRDT(uint256 newPrice_) internal{
         require(newPrice_ > listingPriceRDT);
         listingChallengeRewardRDT = newPrice_;
         emit _RDTListingChallengeRewardModified(newPrice_);
     }
 
-    function modify_listingPriceETH(uint256 newPrice_) external{
+    function modify_listingPriceETH(uint256 newPrice_) internal{
         listingPriceETH = newPrice_;
         emit _ETHListingPriceModified(newPrice_);
     }
 
-    function modify_votePriceRDT(uint256 newPrice_) external{
+    function modify_votePriceRDT(uint256 newPrice_) internal{
         votePriceRDT = newPrice_;
         emit _RDTVotePriceModified(newPrice_);
     }
 
-    function modify_listingTimer(uint256 newTimer_) external{
+    function modify_listingTimer(uint256 newTimer_) internal{
         listingTimer = newTimer_;
         emit _ListingTimerModified(newTimer_);
     }
 
-    function modify_challengeTimer(uint256 newTimer_) external{
+    function modify_challengeTimer(uint256 newTimer_) internal{
         challengeTimer = newTimer_;
         emit _ChallengeTimerModified(newTimer_);
     }
 
-    function modify_membershipAmountRDT(uint256 newAmount_) external{
+    function modify_membershipAmountRDT(uint256 newAmount_) internal{
         membershipAmountRDT = newAmount_;
         emit _RDTMembershipAmountModified(newAmount_);
     }
 
-    function modify_banishListingLimit(int256 newAmount_) external{
+    function modify_banishListingLimit(int256 newAmount_) internal{
         banishListingLimit = newAmount_;
         emit _BanishListingLimitModified(newAmount_);
     }

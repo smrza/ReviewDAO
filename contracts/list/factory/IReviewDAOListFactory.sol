@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 interface IReviewDAOListFactory {
+    event _NewList(address indexed newList, bytes32 indexed hash);
 
     function createList(
         bytes32 nameHash_,
@@ -13,6 +14,6 @@ interface IReviewDAOListFactory {
         address ReviewDAO_,
         address ReviewDAOSettings_
     ) external; 
-    
+
     function getListAddress(bytes32 nameHash_) external view returns(address);
 }

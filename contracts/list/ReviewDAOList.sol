@@ -25,6 +25,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
     );
     event _ChallengeModified(uint256 indexed id, uint256 challengerReward, uint256 listingStake, uint256 challengerStake, uint256 votePrice, uint256 timer, address indexed challenger);
     event _Banished(address indexed sender, bytes32 indexed hash, uint256 downvotes);
+    event _RegisterName(bytes32 indexed hash, bool indexed sender);
 
     string private _name;
     string private _baseUri;
@@ -147,6 +148,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
         listings[listingId_] = listing;
         payable(_ReviewDAO).transfer(msg.value);
         nameRegistered[listingId_] = true;
+        emit _RegisterName(listingId_, true);
         emit _Application(listingId_, msg.sender);
         emit _ListingModified(listingId_, name_, false, baseUri_, msg.sender, listingPriceRDT, challengerPrice, timeLeft, 0, false, 0);
     } 
@@ -303,6 +305,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
                         , "Transfer failed."
                     );
                     nameRegistered[listingId_] = false;
+                    emit _RegisterName(listingId_, false);
                     uint256 additional = challenges[listing.challengeId].listingStake % poll.votesAgainst;
                     require(
                         _token.transfer(_ReviewDAO, additional)
@@ -368,8 +371,23 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
 
     function banishListing(bytes32 listingId_) external {
         require(statuses[listings[listingId_].statusId].votes < _settings.getBanishListingLimit());
-        delete listings[listingId_].whitelisted;
-        delete nameRegistered[listingId_];
+        listings[listingId_].whitelisted = false;
+        Listing memory listing = listings[listingId_];
+        nameRegistered[listingId_] = false;
+        emit _RegisterName(listingId_, false);
+        emit _ListingModified(
+            listingId_,
+            listing.name,
+            listing.whitelisted,
+            listing.baseUri,
+            listing.creator,
+            listing.stake,
+            listing.challengerReward,
+            listing.timer,
+            listing.challengeId,
+            listing.challenged,
+            listing.statusId
+        );
     }
 
     function name() public view virtual override returns (string memory) {

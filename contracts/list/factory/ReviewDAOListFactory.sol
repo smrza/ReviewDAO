@@ -6,8 +6,6 @@ import "../ReviewDAOList.sol";
 import "./IReviewDAOListFactory.sol";
 
 contract ReviewDAOListFactory is IReviewDAOListFactory {
-    event _NewList(ReviewDAOList list, bytes32 indexed hash);
-
     ReviewDAOList[] private _lists;
     mapping(bytes32 => uint256) _listsIds;
 
@@ -30,7 +28,7 @@ contract ReviewDAOListFactory is IReviewDAOListFactory {
         );
         _lists.push(list);
         _listsIds[nameHash_] = _lists.length - 1;
-        emit _NewList(list, nameHash_);
+        emit _NewList(address(list), nameHash_);
     }
 
     function allLists()
@@ -46,7 +44,7 @@ contract ReviewDAOListFactory is IReviewDAOListFactory {
         return _lists[index];
     }
 
-    function getListAddress(bytes32 nameHash_) public view virtual override returns(address){
+    function getListAddress(bytes32 nameHash_) external view virtual override returns(address){
         uint256 index = _listsIds[nameHash_];
         return address(_lists[index]);
     }
