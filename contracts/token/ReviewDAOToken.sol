@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: MIT
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 pragma solidity ^0.8.0;
 
-contract ReviewDAOToken is ERC20, Ownable {
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
+
+contract ReviewDAOToken is ERC20, Ownable, ReentrancyGuard {
     uint64 public MAX_INITIAL_LIQUIDITY = 10000000;
     uint64 public MAX_TEAM_GET = 20000000;
     uint64 public MAX_ECOSYSTEM_GET = 60000000;
@@ -13,7 +16,7 @@ contract ReviewDAOToken is ERC20, Ownable {
     bool public teamMinted = false;
     bool public ecosystemMinted = false;
 
-    constructor() ERC20("Review DAO Token", "DLH"){}
+    constructor() ERC20("Review DAO Token", "RDT"){}
 
     mapping(address => uint256) private privateInvestors;
 
@@ -67,7 +70,7 @@ contract ReviewDAOToken is ERC20, Ownable {
         teamMinted = true;
     }
 
-    function withdrawToLiquidityProvider(address liquidityProvider) external onlyOwner {
+    function withdrawToLiquidityProvider(address liquidityProvider) external onlyOwner nonReentrant {
 		payable(liquidityProvider).transfer(address(this).balance);
 	}
 
