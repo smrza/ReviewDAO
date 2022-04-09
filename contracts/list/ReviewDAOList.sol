@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+
 pragma solidity ^0.8.0;
 
 import "./extensions/IReviewDAOListMetadata.sol";
@@ -40,15 +41,14 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
         string memory baseUri_, 
         address creator_, 
         address token_, 
-        address ReviewDAO_, 
-        address ReviewDAOSettings_
+        address ReviewDAO_
         ){
         _name = name_;
         _baseUri = baseUri_;
         _creator = creator_;
         _token = IERC20(token_);
         _ReviewDAO = ReviewDAO_;
-        _settings = ReviewDAOSettings(ReviewDAOSettings_);
+        _settings = IReviewDAOSettings(ReviewDAO_);
     }
 
     function test() public view returns (uint256){
@@ -111,7 +111,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
 
     modifier ensureMemberOfDAO {
         address owner = msg.sender;
-        require(_token.balanceOf(owner) >= _settings.getMembershipAmountRDT(), "You do not own enough RDT to be allowed to proceed.");
+        require(_token.balanceOf(owner) >= _settings.getMembershipAmountRDT(), "You do not own enough RDT to proceed.");
         _;
     }
 
@@ -122,16 +122,16 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
         require(_token.transferFrom(owner, address(this), cost_),"Token transfer failed");
     }
 
+    function alsjfdlasjdflkasjdflsaf() public view returns(uint256){
+        return _settings.getListingPriceRDT() *3;
+    }
+
     function applyListing(bytes32 listingId_, string memory name_, string memory baseUri_) 
         external 
-        payable 
-        processRDTPayment(_settings.getListingPriceRDT() + _settings.getListingChallengeRewardRDT())
+        processRDTPayment(_settings.getListingPriceRDT() * 3)
     {
         require(!nameRegistered[listingId_], "This listing already exists.");
-        require(msg.value == _settings.getListingPriceETH(), "Incorrect ETH sent.");
-
         uint256 listingPriceRDT = _settings.getListingPriceRDT();
-        uint256 challengerPrice = _settings.getListingChallengeRewardRDT();
         uint256 timeLeft = block.timestamp + _settings.getListingTimer();
         Listing memory listing = Listing({
             name: name_, 
@@ -139,18 +139,17 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
             baseUri: baseUri_, 
             creator: msg.sender, 
             stake: listingPriceRDT, 
-            challengerReward: challengerPrice,
+            challengerReward: listingPriceRDT * 2,
             timer: timeLeft, 
             challengeId: 0,
             challenged: false,
             statusId: 0
         });
         listings[listingId_] = listing;
-        payable(_ReviewDAO).transfer(msg.value);
         nameRegistered[listingId_] = true;
         emit _RegisterName(listingId_, true);
         emit _Application(listingId_, msg.sender);
-        emit _ListingModified(listingId_, name_, false, baseUri_, msg.sender, listingPriceRDT, challengerPrice, timeLeft, 0, false, 0);
+        emit _ListingModified(listingId_, name_, false, baseUri_, msg.sender, listingPriceRDT, listingPriceRDT * 2, timeLeft, 0, false, 0);
     } 
 
     function challengeListing(bytes32 listingId_) 

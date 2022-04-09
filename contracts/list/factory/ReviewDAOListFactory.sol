@@ -15,16 +15,14 @@ contract ReviewDAOListFactory is IReviewDAOListFactory {
         string memory baseUri_,
         address creator_,
         address token_,
-        address ReviewDAO_,
-        address ReviewDAOSettings_
+        address ReviewDAO_
     ) external virtual override {
         ReviewDAOList list = new ReviewDAOList(
             name_,
             baseUri_,
             creator_,
             token_,
-            ReviewDAO_,
-            ReviewDAOSettings_
+            ReviewDAO_
         );
         _lists.push(list);
         _listsIds[nameHash_] = _lists.length - 1;

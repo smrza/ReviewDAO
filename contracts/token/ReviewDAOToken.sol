@@ -1,9 +1,11 @@
 // SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.0;
+
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-pragma solidity ^0.8.0;
 
 contract ReviewDAOToken is ERC20, Ownable, ReentrancyGuard {
     uint64 public MAX_INITIAL_LIQUIDITY = 10000000;

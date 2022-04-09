@@ -11,8 +11,7 @@ interface IReviewDAOListFactory {
         string memory baseUri_,
         address creator_,
         address token_,
-        address ReviewDAO_,
-        address ReviewDAOSettings_
+        address ReviewDAO_
     ) external; 
 
     function getListAddress(bytes32 nameHash_) external view returns(address);
