@@ -12,7 +12,6 @@ const ListPage = () => {
     const { Content } = Layout;
     const { Meta } = Card;
 
-
     const [listItems, setListItems] = useState(lists);
     const { listname } = useParams();
     const navigate = useNavigate();

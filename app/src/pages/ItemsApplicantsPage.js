@@ -9,7 +9,7 @@ import HeaderDobbyLabs from '../components/organisms/HeaderDobbyLabs';
 import FooterDobbyLabs from '../components/organisms/FooterDobbyLabs';
 
 const ItemsApplicantsPage = () => {
-    const { Header, Content, Footer } = Layout;
+    const { Content } = Layout;
     const { Meta } = Card;
 
     const navigate = useNavigate();
