@@ -137,8 +137,6 @@ contract ReviewDAO is ReviewDAOSettings {
     //TESTING below
     //////////
 
-    bool testCalled = false;
-
     function generateListsForTestingPurposes(
         bytes32 hash_, 
         bytes32 hash2_, 
@@ -147,7 +145,6 @@ contract ReviewDAO is ReviewDAOSettings {
         string memory baseUri_,
         string memory baseUri2_
     ) external {
-        require(!testCalled, "Stop.");
         listProposed[hash_] = true;
         listProposed[hash2_] = true;
 
@@ -168,8 +165,6 @@ contract ReviewDAO is ReviewDAOSettings {
             address(_token),
             address(this)
         );
-
-        testCalled = true;
     }
 
     //IMPROVEMENTS TODO
