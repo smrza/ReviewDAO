@@ -6,6 +6,8 @@ import "../ReviewDAOList.sol";
 import "./IReviewDAOListFactory.sol";
 
 contract ReviewDAOListFactory is IReviewDAOListFactory {
+    event _NewList(address indexed newList, bytes32 indexed hash);
+
     ReviewDAOList[] private _lists;
     mapping(bytes32 => uint256) _listsIds;
 
