@@ -6,6 +6,8 @@ import "../ReviewDAOList.sol";
 import "./IReviewDAOListFactory.sol";
 
 contract ReviewDAOListFactory is IReviewDAOListFactory {
+    event _NewList(address indexed newList, bytes32 indexed hash, string name, string baseUri);
+    
     ReviewDAOList[] private _lists;
     mapping(bytes32 => uint256) _listsIds;
 
@@ -26,7 +28,7 @@ contract ReviewDAOListFactory is IReviewDAOListFactory {
         );
         _lists.push(list);
         _listsIds[nameHash_] = _lists.length - 1;
-        emit _NewList(address(list), nameHash_);
+        emit _NewList(address(list), nameHash_, name_, baseUri_);
     }
 
     function allLists()
