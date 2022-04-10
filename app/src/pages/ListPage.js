@@ -3,6 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { lists } from "../static/staticLists"
 import { Card, Layout } from 'antd';
 import CardsWrapper from '../components/layouts/CardsWrapper'
+import ButtonRedirect from '../components/atoms/ButtonRedirect';
+import HeaderDobbyLabs from '../components/organisms/HeaderDobbyLabs';
+import FooterDobbyLabs from '../components/organisms/FooterDobbyLabs';
 
 
 const ListPage = () => {
@@ -13,6 +16,8 @@ const ListPage = () => {
     const navigate = useNavigate();
 
     const handleGoToListMainPage = () => navigate(`/`)
+    const handleGoToItemspplicantsPage = () => navigate(`../${listname}/applicants`)
+    const handleGoToItemApplyPage = () => navigate(`../${listname}/apply`)
 
     useEffect(() => {
         handleListSelect()
@@ -33,9 +38,12 @@ const ListPage = () => {
 
     return (
         <Layout>
-            <Content style={{ padding: '0 50px' }}>
+            <HeaderDobbyLabs />
+            <Content className="content">
                 <h1>List "{listname}"</h1>
-                <button onClick={handleGoToListMainPage}>Go back to main page</button>
+                <ButtonRedirect onClick={handleGoToListMainPage}>Go back to main page</ButtonRedirect>
+                <ButtonRedirect onClick={handleGoToItemApplyPage} style={{ marginLeft: '30px' }}>Apply new item</ButtonRedirect>
+                <ButtonRedirect onClick={handleGoToItemspplicantsPage} style={{ marginLeft: '30px' }}>Vote for applicants</ButtonRedirect>
 
                 <CardsWrapper>
                     {listItems.map((item, index) =>
@@ -50,6 +58,7 @@ const ListPage = () => {
                     )}
                 </CardsWrapper>
             </Content>
+            <FooterDobbyLabs />
         </Layout >
     )
 
