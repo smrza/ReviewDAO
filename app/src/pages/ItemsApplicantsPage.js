@@ -7,6 +7,7 @@ import CardsWrapper from '../components/layouts/CardsWrapper'
 import ButtonRedirect from '../components/atoms/ButtonRedirect';
 import HeaderDobbyLabs from '../components/organisms/HeaderDobbyLabs';
 import FooterDobbyLabs from '../components/organisms/FooterDobbyLabs';
+import HeaderOne from '../components/atoms/HeaderOne';
 
 const ItemsApplicantsPage = () => {
     const { Content } = Layout;
@@ -23,7 +24,6 @@ const ItemsApplicantsPage = () => {
 
 
     useEffect(() => {
-        console.log(`listname: ${listname}`)
         handleApplicantsSelect()
     })
 
@@ -36,30 +36,28 @@ const ItemsApplicantsPage = () => {
         });
 
         setListApplicants(lists[applicants.indexOf(listname)].applicants);
-        console.log(listApplicants)
-
         setListApplicantsCopy(listApplicants);
     }
 
-    const handleVote = (index) => {
-        console.log(listApplicantsCopy)
-        console.log(`Voting Card index: ${index}`)
+    // const handleVote = (index) => {
+    //     console.log(listApplicantsCopy)
+    //     console.log(`Voting Card index: ${index}`)
 
-        const changingApplicant = listApplicantsCopy[index].applicantName
-        console.log(`Changing vote in ${changingApplicant}`)
+    //     const changingApplicant = listApplicantsCopy[index].applicantName
+    //     console.log(`Changing vote in ${changingApplicant}`)
 
-        listApplicantsCopy[index].applicantChallenged = true;
-        console.log(listApplicantsCopy)
-    }
+    //     listApplicantsCopy[index].applicantChallenged = true;
+    //     console.log(listApplicantsCopy)
+    // }
 
     return (
         <Layout>
             <HeaderDobbyLabs />
 
             <Content className="content">
-                <h1>
+                <HeaderOne>
                     Challenge/Vote for applicants in list "{listname}"
-                </h1>
+                </HeaderOne>
 
                 <ButtonRedirect onClick={handleGoToListMainPage}>Go back to main page</ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToListPage} style={{ marginLeft: '30px' }}>Go back to list page</ButtonRedirect>
@@ -68,11 +66,11 @@ const ItemsApplicantsPage = () => {
                     {listApplicants.map((applicant, index) =>
                         <Card
                             key={index}
-                            style={{ margin: '1rem', padding: '1rem', width: '20%', backgroundColor: 'magenta', border: '1px solid black', cursor: 'pointer' }}
+                            style={{ margin: '1rem', padding: '1rem', width: '20%', backgroundColor: 'lightgray', border: '1px solid black', cursor: 'pointer' }}
                             cover={<img alt="example" src={applicant.applicantImg} width="100%" />}
                         >
                             <Meta title={applicant.applicantName} description={applicant.applicantDes} />
-                            <button onClick={handleVote(index)}>Challenge</button>
+                            {/* <button onClick={handleVote(index)}>Challenge</button> */}
 
                             {/* {applicant.applicantChallenged === "false" ?
                                 <button onClick={handleVote(index)}>Challenge</button>

@@ -7,9 +7,11 @@ import { lists } from '../static/staticLists'
 import ButtonRedirect from "../components/atoms/ButtonRedirect";
 import HeaderDobbyLabs from "../components/organisms/HeaderDobbyLabs";
 import FooterDobbyLabs from "../components/organisms/FooterDobbyLabs";
+import HeaderOne from "../components/atoms/HeaderOne";
+import ButtonApply from "../components/atoms/ButtonApply"
 
 const AddListPage = () => {
-    const { Header, Content, Footer } = Layout;
+    const { Content } = Layout;
     const navigate = useNavigate();
     const { listname } = useParams();
 
@@ -49,8 +51,6 @@ const AddListPage = () => {
         },
         validate: validateInputs,
         onSubmit: async (values, { resetForm }) => {
-            console.log(`Applied - itemName: ${formik.values.itemName}, itemDes: ${formik.values.itemDes}, itemURL: ${formik.values.itemURL}`)
-
             try {
                 // TODO: submit
                 // TODO: redirect to applicants page
@@ -66,11 +66,10 @@ const AddListPage = () => {
             <HeaderDobbyLabs />
 
             <Content className="content">
-                <h1>Apply item to the list "{listname}" </h1>
+                <HeaderOne>Apply item to the list "{listname}" </HeaderOne>
                 <ButtonRedirect onClick={handleGoToListMainPage} >Go back to main page</ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToListPage} style={{ marginLeft: '30px' }}> Go back to list page </ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToItemsApplicantsPage} style={{ marginLeft: '30px' }}> Show applicants </ButtonRedirect>
-
 
                 <form style={{ marginTop: '30px' }} onSubmit={formik.handleSubmit}>
                     <InputGroup className="mb-4">
@@ -105,9 +104,9 @@ const AddListPage = () => {
                     </InputGroup>
 
 
-                    <Button type='submit'>
+                    <ButtonApply type='submit'>
                         Apply for "{listname}"
-                    </Button>
+                    </ButtonApply>
                 </form>
             </Content>
             <FooterDobbyLabs />

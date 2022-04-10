@@ -23,7 +23,7 @@ const Cards = ({ data }) => {
             {data.map((list, index) =>
                 <Card
                     key={index}
-                    style={{ margin: '1rem', padding: '1rem', width: '20%', backgroundColor: 'lightgreen', border: '1px solid black', cursor: 'pointer' }}
+                    style={{ color: 'white', margin: '1rem', padding: '1rem', width: '20%', backgroundColor: 'lightgray', color: '#001529', border: '1px solid black', cursor: 'pointer' }}
                     cover={<img alt="listImg" src={list.listImg} width="100%" />}
                     onClick={() => setSelectedList(list.listName)}
                 >

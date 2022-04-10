@@ -6,6 +6,7 @@ import CardsWrapper from '../components/layouts/CardsWrapper'
 import ButtonRedirect from '../components/atoms/ButtonRedirect';
 import HeaderDobbyLabs from '../components/organisms/HeaderDobbyLabs';
 import FooterDobbyLabs from '../components/organisms/FooterDobbyLabs';
+import HeaderOne from '../components/atoms/HeaderOne';
 
 
 const ListPage = () => {
@@ -25,8 +26,6 @@ const ListPage = () => {
     })
 
     const handleListSelect = () => {
-        console.log(`Selected list: ${listname}`);
-
         const animals = lists.map((item) => {
             return (
                 item.listName
@@ -34,14 +33,13 @@ const ListPage = () => {
         });
 
         setListItems(lists[animals.indexOf(listname)].items);
-        console.log(listItems)
     }
 
     return (
         <Layout>
             <HeaderDobbyLabs />
             <Content className="content">
-                <h1>List "{listname}"</h1>
+                <HeaderOne>List "{listname}"</HeaderOne>
                 <ButtonRedirect onClick={handleGoToListMainPage}>Go back to main page</ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToItemApplyPage} style={{ marginLeft: '30px' }}>Apply new item</ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToItemspplicantsPage} style={{ marginLeft: '30px' }}>Vote for applicants</ButtonRedirect>
@@ -50,8 +48,8 @@ const ListPage = () => {
                     {listItems.map((item, index) =>
                         <Card
                             key={index}
-                            style={{ margin: '1rem', padding: '1rem', width: '20%', backgroundColor: 'lightblue', border: '1px solid black' }}
-                            cover={<img alt="listImg" src={item.itemImg} width="100%" />}
+                            style={{ margin: '1rem', padding: '1rem', width: '20%', backgroundColor: 'lightgray', border: '1px solid black' }}
+                            cover={<img alt="listImg" src={item.itemImg} style={{ width: '100%' }} />}
                         >
                             <Meta title={item.itemName} description={item.itemDes} />
                         </Card>

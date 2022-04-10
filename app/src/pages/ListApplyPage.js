@@ -8,6 +8,9 @@ import HeaderDobbyLabs from "../components/organisms/HeaderDobbyLabs";
 import FooterDobbyLabs from "../components/organisms/FooterDobbyLabs";
 import { Buffer } from "buffer"
 import { create } from "ipfs-http-client";
+import ButtonApply from "../components/atoms/ButtonApply";
+import InputItem from "../components/atoms/InputItem";
+import HeaderOne from "../components/atoms/HeaderOne";
 
 const client = create('https://ipfs.infura.io:5001/api/v0');
 
@@ -22,24 +25,7 @@ const ListApplyPage = () => {
 
     const handleGoToListMainPage = () => navigate(`/`)
     const handleGoToListApplicantsPage = () => navigate(`/list/applicants`)
-    // const handleGoToListApplicantsPageWithNewApplicant = (listURL) => navigate(`/list/applicants`, { applicantURL: listURL })
-    const handleaaa = (listURL) => navigate(`/list/applicants`, { state: { applicantURL: listURL } })
-
-    const [items, setItems] = useState([])
-
-    // useEffect(() => {
-    //     fetch("https://ipfs.infura.io/ipfs/QmVEGHvpxE1k3UKrwdNMAoWmd5Yeu6AtcCQ8oavZU8qCzw")
-    //         .then(res => res.json())
-    //         .then(
-    //             (result) => {
-    //                 setItems(result);
-
-    //             },
-    //             (error) => {
-    //                 console.log(error)
-    //             }
-    //         )
-    // }, [])
+    const handleGoToListApplicantsPageWithNewApplicant = (listURL) => navigate(`/list/applicants`, { state: { applicantURL: listURL } })
 
 
     const retrieveFile = (e) => {
@@ -47,7 +33,7 @@ const ListApplyPage = () => {
         const reader = new window.FileReader();
         reader.readAsArrayBuffer(data);
         reader.onloadend = () => {
-            console.log("Buffer data: ", Buffer(reader.result));
+            // console.log("Buffer data: ", Buffer(reader.result));
             setFile(Buffer(reader.result));
         }
 
@@ -64,7 +50,7 @@ const ListApplyPage = () => {
             const listIPFS = await client.add(`{"listApplicantName": "${listName}", "listApplicantDes": "${listDes}", "listApplicantImg": "${imgURL}"}`);
             const listURL = `https://ipfs.infura.io/ipfs/${listIPFS.path}`;
             console.log(`finalURL: ${listURL}`)
-            handleaaa(listURL)
+            handleGoToListApplicantsPageWithNewApplicant(listURL)
 
         } catch (error) {
             console.log(error.message);
@@ -76,17 +62,17 @@ const ListApplyPage = () => {
         <Layout>
             <HeaderDobbyLabs />
             <Content className="content">
-                <h1>Apply new list</h1>
+                <HeaderOne>Apply new list</HeaderOne>
                 <ButtonRedirect onClick={handleGoToListMainPage}> Go back to main page </ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToListApplicantsPage}> Show list applicants </ButtonRedirect>
 
-                <form className="form" onSubmit={handleSubmit}>
-                    List name:
-                    <input type="text" name="listName" placeholder="listName" onChange={e => setListname(e.target.value)} /> <br></br>
+                <form onSubmit={handleSubmit}>
+                    <span> List name: </span>
+                    <InputItem type="text" name="listName" placeholder="listName" onChange={e => setListname(e.target.value)} /> <br></br>
                     List description:
-                    <input type="text" name="listDes" placeholder="listDes" onChange={e => setListDes(e.target.value)} />  <br></br>
+                    <InputItem type="text" name="listDes" placeholder="listDes" onChange={e => setListDes(e.target.value)} />  <br></br>
                     <input type="file" name="listImg" onChange={retrieveFile} /> <br></br>
-                    <button type="submit" className="btn">Apply list</button>
+                    <ButtonApply type="submit"> Apply list </ButtonApply>
                 </form>
             </Content>
             <FooterDobbyLabs />
