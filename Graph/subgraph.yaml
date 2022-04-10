@@ -1,0 +1,39 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ReviewDAOList
+    network: kovan
+    source:
+      address: "0xF1aB33F57C64393Cad6063c17d01b7bD51c16a2c"
+      abi: ReviewDAOList
+      startBlock: 30939025
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - _Banished
+        - _ChallengeModified
+        - _ListingModified
+        - _ListingStatus
+        - _ResolveListing
+        - _Withdrawal
+      abis:
+        - name: ReviewDAOList
+          file: ./abis/ReviewDAOList.json
+      eventHandlers:
+        - event: _Banished(indexed bytes32,bool,indexed address,int256)
+          handler: handle_Banished
+        - event: _ChallengeModified(indexed uint256,uint256,uint256,uint256,uint256,uint256,indexed address)
+          handler: handle_ChallengeModified
+        - event: _ListingModified(indexed bytes32,string,bool,string,indexed address,uint256,uint256,uint256,uint256,bool,uint256)
+          handler: handle_ListingModified
+        - event: _ListingStatus(indexed uint256,int256)
+          handler: handle_ListingStatus
+        - event: _ResolveListing(indexed bytes32,bool,address,uint256)
+          handler: handle_ResolveListing
+        - event: _Withdrawal(indexed address,uint256,uint256)
+          handler: handle_Withdrawal
+      file: ./src/mapping.ts
