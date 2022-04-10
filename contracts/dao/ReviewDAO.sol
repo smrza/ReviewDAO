@@ -26,6 +26,7 @@ contract ReviewDAO is ReviewDAOSettings {
         _token = IERC20(token_);
         waitingPeriod = block.timestamp + 604800;
         voteWaitingPeriod = 604800;
+        proposalWaitingPeriod = 2628000;
         votingReward = 1000;
     }
 
@@ -57,6 +58,7 @@ contract ReviewDAO is ReviewDAOSettings {
     uint256 waitingPeriod;
     uint256 voteWaitingPeriod;
     uint256 votingReward;
+    uint256 proposalWaitingPeriod;
 
     function proposeNewList(bytes32 hash_, string calldata name_, string calldata baseUri_) external onlyNFTOwner {
         require(!listProposed[hash_], "List already proposed.");
@@ -76,7 +78,7 @@ contract ReviewDAO is ReviewDAOSettings {
         listProposals[hash_].creator = msg.sender;
         listProposed[hash_] = true;
         hashes.push(hash_);
-        recentProposal[token] = voteWaitingPeriod;
+        recentProposal[token] = proposalWaitingPeriod;
         emit _NewProposal(hash_, name_, baseUri_, msg.sender, 0);
     }
 
@@ -166,10 +168,4 @@ contract ReviewDAO is ReviewDAOSettings {
             address(this)
         );
     }
-
-    //IMPROVEMENTS TODO
-    //NFT rewards
-    //make proposals to change settings values
-    //banish list option (+ downvote, upvote)
-    //proposals to change waitingPeriod, voteWaitingPeriod, uint256 votingReward;
 }

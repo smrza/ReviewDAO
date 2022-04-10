@@ -120,10 +120,6 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
         require(_token.transferFrom(owner, address(this), cost_),"Token transfer failed");
     }
 
-    function alsjfdlasjdflkasjdflsaf() public view returns(uint256){
-        return _settings.getListingPriceRDT() *3;
-    }
-
     function applyListing(bytes32 listingId_, string memory name_, string memory baseUri_) 
         external 
         processRDTPayment(_settings.getListingPriceRDT() * 3)
