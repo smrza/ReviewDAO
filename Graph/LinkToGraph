@@ -1,0 +1,31 @@
+Command to Graph -> {
+  listEntities(first: 5) {
+    id
+    count
+    name
+    whitelisted
+    baseUri
+    creator
+    stake
+    challangerReward
+    timer
+    challangeId
+    challanged
+    statusId
+  }
+  challanges(first: 5) {
+    id
+    challangerReward
+    listingStake
+    challangerStake
+    votePrice
+    timer
+    challenger
+  }
+  listingStatuses(first:5){
+    id
+    votes
+  }
+}
+
+https://thegraph.com/hosted-service/subgraph/rabeles11/daohackatonetherlisting
