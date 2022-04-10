@@ -25,6 +25,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
     );
     event _ChallengeModified(uint256 indexed id, uint256 challengerReward, uint256 listingStake, uint256 challengerStake, uint256 votePrice, uint256 timer, address indexed challenger);
     event _Banished(bytes32 indexed hash, bool whitelisted, address indexed sender, int256 downvotes);
+    event _ListingStatus(uint256 indexed id, int256 votes);
 
     string private _name;
     string private _baseUri;
@@ -218,6 +219,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
         require(!statuses[id].accountVoted[msg.sender], "You already voted for this listing.");
         ++statuses[id].votes;
         statuses[id].accountVoted[msg.sender] = true;
+        emit _ListingStatus(id, statuses[id].votes);
     }
 
     function downvoteListing(bytes32 listingId_) external ensureMemberOfDAO {
@@ -226,6 +228,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
         require(!statuses[id].accountVoted[msg.sender], "You already voted for this listing.");
         --statuses[id].votes;
         statuses[id].accountVoted[msg.sender] = true;
+        emit _ListingStatus(id, statuses[id].votes);
     }
 
     function resolveListing(bytes32 listingId_) external nonReentrant {
@@ -249,6 +252,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
             listing.stake = 0;
             listing.challengerReward = 0;
             listing.statusId = statusesIds;
+            emit _ListingStatus(statusesIds, 0);
             ++statusesIds;
             result = true;
         }
@@ -275,6 +279,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
                         , "Transfer failed."
                     );
                     listing.statusId = statusesIds;
+                    emit _ListingStatus(statusesIds, 0);
                     ++statusesIds;
                     uint256 additional = challenges[listing.challengeId].challengerStake % poll.votesFor;
                     require(
