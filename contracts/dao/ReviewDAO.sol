@@ -2,17 +2,18 @@
 
 import "./ReviewDAOSettings.sol";
 import "../list/factory/IReviewDAOListFactory.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 pragma solidity ^0.8.0;
 
 contract ReviewDAO is ReviewDAOSettings {
-    event _ProposalModified(bytes32 indexed hash, string name, string baseUri, address creator, uint256 votes);
+    event _ProposalModified(bytes32 indexed hash, string name, uint256 votes);
+    event _NewProposal(bytes32 indexed hash, string name, string baseUri, address creator, uint256 votes);
     event _NewListCreated(bytes32 indexed hash, address list);
 
     IReviewDAOListFactory _factory;
-    IERC721 _NFT;
+    IERC721Enumerable _NFT;
     IERC20 _token;
 
     constructor(
@@ -21,9 +22,11 @@ contract ReviewDAO is ReviewDAOSettings {
         address token_
     ){
         _factory = IReviewDAOListFactory(factory_);
-        _NFT = IERC721(NFT_);
+        _NFT = IERC721Enumerable(NFT_);
         _token = IERC20(token_);
         waitingPeriod = block.timestamp + 604800;
+        voteWaitingPeriod = 604800;
+        votingReward = 1000;
     }
 
     modifier onlyNFTOwner() {
@@ -47,30 +50,53 @@ contract ReviewDAO is ReviewDAOSettings {
     bytes32[] hashes;
     mapping(bytes32 => ListProposal) listProposals;
     mapping(bytes32 => bool) listProposed;
-    mapping(address => uint256) recentProposal;
 
-    mapping(address => mapping(bytes32 => bool)) voted;
+    mapping(uint256 => uint256) recentProposal;
+    mapping(uint256 => uint256) recentVote;
 
     uint256 waitingPeriod;
+    uint256 voteWaitingPeriod;
+    uint256 votingReward;
 
     function proposeNewList(bytes32 hash_, string calldata name_, string calldata baseUri_) external onlyNFTOwner {
         require(!listProposed[hash_], "List already proposed.");
-        require(recentProposal[msg.sender] < block.timestamp);
+        uint256 token;
+        bool proceed;
+        for(uint i = 0; i < _NFT.totalSupply(); i++){
+            uint256 lastToken = getNextTokenId(msg.sender, i);
+            if(recentProposal[lastToken] < block.timestamp){
+                proceed = true;
+                token = lastToken;
+            }
+            i = lastToken;
+        }
+        require(proceed, "No token to vote with.");
         listProposals[hash_].name = name_;
         listProposals[hash_].baseUri = baseUri_;
         listProposals[hash_].creator = msg.sender;
         listProposed[hash_] = true;
         hashes.push(hash_);
-        //improve
-        recentProposal[msg.sender] = block.timestamp + 604800;
-        emit _ProposalModified(hash_, name_, baseUri_, msg.sender, 0);
+        recentProposal[token] = voteWaitingPeriod;
+        emit _NewProposal(hash_, name_, baseUri_, msg.sender, 0);
     }
 
     function voteForProposal(bytes32 hash_) external onlyNFTOwner ensureMemberOfDAO {
         require(listProposed[hash_], "List does not exist.");
-        require(!voted[msg.sender][hash_], "You already voted for this proposal.");
+        uint256 token;
+        bool proceed;
+        for(uint i = 0; i < _NFT.totalSupply(); i++){
+            uint256 lastToken = getNextTokenId(msg.sender, i);
+            if(recentVote[lastToken] < block.timestamp){
+                proceed = true;
+                token = lastToken;
+            }
+            i = lastToken;
+        }
+        require(proceed, "No token to vote with.");
+        recentVote[token] = voteWaitingPeriod;
+        require(_token.transfer(msg.sender, votingReward), "Transfer failed.");
         ++listProposals[hash_].votes;
-        emit _ProposalModified(hash_, listProposals[hash_].name, listProposals[hash_].baseUri, listProposals[hash_].creator, listProposals[hash_].votes);
+        emit _ProposalModified(hash_, listProposals[hash_].name, listProposals[hash_].votes);
     }
 
     function createNewList() external {
@@ -100,6 +126,10 @@ contract ReviewDAO is ReviewDAOSettings {
             , "Transfer failed."
         );
         emit _NewListCreated(hash, _factory.getListAddress(hash));
+    }
+
+    function getNextTokenId(address owner, uint256 startingIndex) internal view returns(uint256){
+        return _NFT.tokenOfOwnerByIndex(owner, startingIndex);
     }
 
 
@@ -142,7 +172,9 @@ contract ReviewDAO is ReviewDAOSettings {
         testCalled = true;
     }
 
-    //NFT rewards (contract gets 100 NFTs)
-    //improvements - make proposals to change settings values
+    //IMPROVEMENTS TODO
+    //NFT rewards
+    //make proposals to change settings values
     //banish list option (+ downvote, upvote)
+    //proposals to change waitingPeriod, voteWaitingPeriod, uint256 votingReward;
 }

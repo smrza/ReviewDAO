@@ -7,13 +7,13 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./ERC721A.sol";
 
 contract RDNFT is Ownable, ERC721A, ReentrancyGuard {
-  uint256 public constant maxMintAmountPerAddress = 10;
+  uint256 public constant maxMintAmountPerAddress = 3;
   uint64 public pubsalePrice = 0.1 ether;
   bool reviewDAOMinted = false;
 
   string private _baseTokenURI = "www.example.com";
 
-  constructor() ERC721A("Reviewdaos", "RDNFT", 10, 10000) {}
+  constructor() ERC721A("Reviewdaos", "RDNFT", 10, 1000) {}
 
   modifier callerIsUser() {
     require(tx.origin == msg.sender, "Caller is another contract");
@@ -38,7 +38,7 @@ contract RDNFT is Ownable, ERC721A, ReentrancyGuard {
   function mintToReviewDAO(address reviewDAO) external onlyOwner {
     require(!reviewDAOMinted, "ReviewDAO has already minted its tokens");
     
-    uint256 interations = 100 / maxBatchSize;
+    uint256 interations = 30 / maxBatchSize;
     for (uint256 i = 0; i < interations; i++) {
       _safeMint(reviewDAO, maxBatchSize);
     }

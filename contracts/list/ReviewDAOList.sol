@@ -8,7 +8,6 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../dao/ReviewDAOSettings.sol";
 
 contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
-    event _Application(bytes32 indexed hash, address indexed applicant);
     event _ResolveListing(bytes32 indexed hash, bool whitelisted, address resolver);
     event _Withdrawal(address indexed sender, uint256 timestamp, uint256 amount);
     event _ListingModified(
@@ -25,8 +24,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
         uint256 statusId
     );
     event _ChallengeModified(uint256 indexed id, uint256 challengerReward, uint256 listingStake, uint256 challengerStake, uint256 votePrice, uint256 timer, address indexed challenger);
-    event _Banished(address indexed sender, bytes32 indexed hash, uint256 downvotes);
-    event _RegisterName(bytes32 indexed hash, bool indexed sender);
+    event _Banished(bytes32 indexed hash, bool whitelisted, address indexed sender, int256 downvotes);
 
     string private _name;
     string private _baseUri;
@@ -147,8 +145,6 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
         });
         listings[listingId_] = listing;
         nameRegistered[listingId_] = true;
-        emit _RegisterName(listingId_, true);
-        emit _Application(listingId_, msg.sender);
         emit _ListingModified(listingId_, name_, false, baseUri_, msg.sender, listingPriceRDT, listingPriceRDT * 2, timeLeft, 0, false, 0);
     } 
 
@@ -304,7 +300,6 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
                         , "Transfer failed."
                     );
                     nameRegistered[listingId_] = false;
-                    emit _RegisterName(listingId_, false);
                     uint256 additional = challenges[listing.challengeId].listingStake % poll.votesAgainst;
                     require(
                         _token.transfer(_ReviewDAO, additional)
@@ -373,20 +368,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
         listings[listingId_].whitelisted = false;
         Listing memory listing = listings[listingId_];
         nameRegistered[listingId_] = false;
-        emit _RegisterName(listingId_, false);
-        emit _ListingModified(
-            listingId_,
-            listing.name,
-            listing.whitelisted,
-            listing.baseUri,
-            listing.creator,
-            listing.stake,
-            listing.challengerReward,
-            listing.timer,
-            listing.challengeId,
-            listing.challenged,
-            listing.statusId
-        );
+        emit _Banished(listingId_, false, msg.sender, statuses[listing.statusId].votes);
     }
 
     function name() public view virtual override returns (string memory) {
