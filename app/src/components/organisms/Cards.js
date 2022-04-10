@@ -5,6 +5,7 @@ import CardsWrapper from "../layouts/CardsWrapper"
 
 
 const Cards = ({ data }) => {
+    const { Meta } = Card;
     const [selectedList, setSelectedList] = useState('');
 
     useEffect(() => {
@@ -26,8 +27,7 @@ const Cards = ({ data }) => {
                     cover={<img alt="listImg" src={list.listImg} width="100%" />}
                     onClick={() => setSelectedList(list.listName)}
                 >
-                    <div style={{ fontSize: 'larger', fontWeight: 'bolder' }}>{list.listName}</div>
-                    <div>{list.listDes}</div>
+                    <Meta title={list.listName} description={list.listDes} />
                 </Card>
             )}
         </CardsWrapper>

@@ -4,6 +4,7 @@ const ButtonRedirect = styled.button`
     cursor: pointer;
     font-weight: bold;
     border-radius: 10px;
+    margin-right: 30px;
 
     &:hover {
         color: white;

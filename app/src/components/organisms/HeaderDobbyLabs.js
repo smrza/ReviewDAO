@@ -55,13 +55,9 @@ const HeaderDobbyLabs = () => {
                 <LogoHeader onClick={handleGoToListMainPage}>DOBBY LABS</LogoHeader>
                 <HeaderLinksWrapper>
                     {dataAccount.Address !== "" ?
-                        // <>
-                        //     <HeaderItem> Connected wallet: {dataAccount.Address} </HeaderItem>
-                        //     {/* <HeaderItem> Balance: {dataAccount.Balance} </HeaderItem> */}
-                        // </>
                         <>
-                            <span> {dataAccount.Address} </span>
-                            <span> {dataAccount.Balance} ETH </span>
+                            <span style={{ fontSize: 'small' }}> {dataAccount.Address} </span>
+                            <span style={{ fontSize: 'small' }}> {dataAccount.Balance} ETH </span>
                         </>
 
                         : <HeaderItem onClick={handleAccountInfo}> Connect wallet </HeaderItem>

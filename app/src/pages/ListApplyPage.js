@@ -15,6 +15,7 @@ const ListApplyPage = () => {
     const { listname } = useParams();
 
     const handleGoToListMainPage = () => navigate(`/`)
+    const handleGoToListApplicantsPage = () => navigate(`/list/applicants`)
 
 
     const validateInputs = async (values) => {
@@ -58,6 +59,7 @@ const ListApplyPage = () => {
             <Content className="content">
                 <h1>Apply new list</h1>
                 <ButtonRedirect onClick={handleGoToListMainPage}> Go back to main page </ButtonRedirect>
+                <ButtonRedirect onClick={handleGoToListApplicantsPage}>Show list applicants</ButtonRedirect>
 
                 <form style={{ marginTop: '30px' }} onSubmit={formik.handleSubmit}>
                     <InputGroup className="mb-4">

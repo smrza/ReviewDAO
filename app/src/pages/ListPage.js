@@ -9,7 +9,9 @@ import FooterDobbyLabs from '../components/organisms/FooterDobbyLabs';
 
 
 const ListPage = () => {
-    const { Header, Content, Footer } = Layout;
+    const { Content } = Layout;
+    const { Meta } = Card;
+
 
     const [listItems, setListItems] = useState(lists);
     const { listname } = useParams();
@@ -52,8 +54,7 @@ const ListPage = () => {
                             style={{ margin: '1rem', padding: '1rem', width: '20%', backgroundColor: 'lightblue', border: '1px solid black' }}
                             cover={<img alt="listImg" src={item.itemImg} width="100%" />}
                         >
-                            <div style={{ fontSize: 'larger', fontWeight: 'bolder' }}>{item.itemName}</div>
-                            <div>{item.itemDes}</div>
+                            <Meta title={item.itemName} description={item.itemDes} />
                         </Card>
                     )}
                 </CardsWrapper>
