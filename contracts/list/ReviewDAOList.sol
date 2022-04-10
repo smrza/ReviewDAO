@@ -8,7 +8,7 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "../dao/ReviewDAOSettings.sol";
 
 contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
-    event _ResolveListing(bytes32 indexed hash, bool whitelisted, address resolver);
+    event _ResolveListing(bytes32 indexed hash, bool whitelisted, address resolver, uint256 statsId);
     event _Withdrawal(address indexed sender, uint256 timestamp, uint256 amount);
     event _ListingModified(
         bytes32 indexed hash, 
@@ -310,7 +310,7 @@ contract ReviewDAOList is IReviewDAOListMetadata, ReentrancyGuard{
                 }
             }
         }
-        emit _ResolveListing(listingId_, result, msg.sender);
+        emit _ResolveListing(listingId_, result, msg.sender, listing.statusId);
     }
 
     function claimRewards() external nonReentrant {
