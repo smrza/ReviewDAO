@@ -1,5 +1,8 @@
 # ReviewDAO
 Project for ETHGlobal DAOHack.
+Project for Encode DAO Hack.
+
+Project still in progress.
 
 Contracts done 90%.
 Graph is done for one list. The plan is to implement all lists and proposals.
