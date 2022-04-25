@@ -5,17 +5,34 @@ import CardsWrapper from "../layouts/CardsWrapper"
 
 
 const Cards = ({ data }) => {
-    const { Meta } = Card;
-    const [selectedList, setSelectedList] = useState('');
+    const { Meta } = Card
+    const [selectedListAddress, setSelectedListAddress] = useState('')
+    const [selectedListName, setSelectedListName] = useState('')
+
+    // useEffect(() => {
+    //     if (selectedListName !== '') {
+    //         handleGoToListDetail()
+    //     }
+    // })
+
+    const handleListSelect = (selectedList) => {
+        setSelectedListAddress(selectedList.newList)
+        setSelectedListName(selectedList.name)
+    }
 
     useEffect(() => {
-        if (selectedList !== '') {
+        if (selectedListAddress !== '') {
+            console.log(`selectedListAddress: ${selectedListAddress}`)
+            console.log(`selectedListName: ${selectedListName}`)
             handleGoToListDetail()
         }
     })
 
+
     const navigate = useNavigate();
-    const handleGoToListDetail = () => navigate(`/lists/${selectedList}`)
+    const handleGoToListDetail = () => navigate(`/lists/${selectedListAddress}`, { state: { listname: selectedListName } })
+    // const handleGoToListDetail = () => navigate(`/lists/${selectedListAddress}`)
+
 
 
     return (
@@ -25,9 +42,10 @@ const Cards = ({ data }) => {
                     key={index}
                     style={{ color: 'white', margin: '1rem', padding: '1rem', width: '20%', backgroundColor: 'lightgray', color: '#001529', border: '1px solid black', cursor: 'pointer' }}
                     cover={<img alt="listImg" src={list.listImg} width="100%" />}
-                    onClick={() => setSelectedList(list.listName)}
+                    // onClick={() => setSelectedListAddress(list.newList)}
+                    onClick={() => handleListSelect(list)}
                 >
-                    <Meta title={list.listName} description={list.listDes} />
+                    <Meta title={list.name} description={list.stake} />
                 </Card>
             )}
         </CardsWrapper>

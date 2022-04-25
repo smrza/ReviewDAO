@@ -12,9 +12,9 @@ export default () => {
         <BrowserRouter>
             <Routes>
                 <Route exact path='/' element={<MainPage />} />
-                <Route path='/lists/:listname' element={<ListPage />} />
-                <Route path='/:listname/apply' element={<ItemApplyPage />} />
-                <Route path='/:listname/applicants' element={<ItemsApplicantsPage />} />
+                <Route path='/lists/:listAddress' element={<ListPage />} />
+                <Route path='/:listAddress/apply' element={<ItemApplyPage />} />
+                <Route path='/:listAddress/applicants' element={<ItemsApplicantsPage />} />
                 <Route path='/list/apply' element={<ListApplyPage />} />
                 <Route path='/list/applicants' element={<ListApplicantsPage />} />
             </Routes>

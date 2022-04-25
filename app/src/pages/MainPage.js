@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import Cards from "../components/organisms/Cards";
 import { lists } from "../static/staticLists"
@@ -7,12 +7,53 @@ import ButtonRedirect from "../components/atoms/ButtonRedirect"
 import HeaderDobbyLabs from "../components/organisms/HeaderDobbyLabs";
 import FooterDobbyLabs from "../components/organisms/FooterDobbyLabs";
 import HeaderOne from "../components/atoms/HeaderOne";
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+
 
 const MainPage = () => {
     const { Content } = Layout;
     const navigate = useNavigate();
+
+    const [graphLists, setGraphLists] = useState(Object)
+
     const handleGoToListApplyPage = () => navigate(`/list/apply`)
     const handleGoToListApplicantsPage = () => navigate(`/list/applicants`)
+
+    const APIURL = 'https://api.thegraph.com/subgraphs/name/rabeles11/reviewdao'
+
+
+    useEffect(() => {
+        getListsFromGraph()
+    }, [])
+
+
+    const getListsFromGraph = async () => {
+        const factoryQuery = `
+            query {
+                factoryContracts(first: 5, orderBy: name) {
+                    baseUri
+                    name
+                    newList
+                }
+            }
+        `
+        const client = new ApolloClient({
+            uri: APIURL,
+            cache: new InMemoryCache(),
+        })
+
+        client
+            .query({
+                query: gql(factoryQuery),
+            })
+            .then((ddd) => setGraphLists(ddd.data.factoryContracts))
+
+            .catch((err) => {
+                console.log('Error fetching data: ', err)
+            })
+
+        await client.query(factoryQuery).toPromise()
+    }
 
     return (
         <Layout>
@@ -23,7 +64,10 @@ const MainPage = () => {
                 <ButtonRedirect onClick={handleGoToListApplyPage}>Apply new list</ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToListApplicantsPage}>Show list applicants</ButtonRedirect>
 
-                <Cards data={lists}></Cards>
+                {Object.keys(graphLists).length > 0 ?
+                    <Cards data={graphLists}></Cards>
+                    : null
+                }
             </Content>
             <FooterDobbyLabs />
         </Layout>
