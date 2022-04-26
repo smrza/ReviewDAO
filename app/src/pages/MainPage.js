@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import Cards from "../components/organisms/Cards";
-import { lists } from "../static/staticLists"
 import { Layout } from 'antd';
 import ButtonRedirect from "../components/atoms/ButtonRedirect"
 import HeaderDobbyLabs from "../components/organisms/HeaderDobbyLabs";
 import FooterDobbyLabs from "../components/organisms/FooterDobbyLabs";
 import HeaderOne from "../components/atoms/HeaderOne";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+import { gql as gqlTag } from "graphql-tag"
 
 
 const MainPage = () => {
-    const { Content } = Layout;
-    const navigate = useNavigate();
+    const { Content } = Layout
+    const navigate = useNavigate()
 
     const [graphLists, setGraphLists] = useState(Object)
 
@@ -21,13 +21,12 @@ const MainPage = () => {
 
     const APIURL = 'https://api.thegraph.com/subgraphs/name/rabeles11/reviewdao'
 
-
     useEffect(() => {
         getListsFromGraph()
     }, [])
 
-
     const getListsFromGraph = async () => {
+        // const factoryQuery = gql`
         const factoryQuery = `
             query {
                 factoryContracts(first: 5, orderBy: name) {
@@ -37,6 +36,7 @@ const MainPage = () => {
                 }
             }
         `
+
         const client = new ApolloClient({
             uri: APIURL,
             cache: new InMemoryCache(),
@@ -46,7 +46,9 @@ const MainPage = () => {
             .query({
                 query: gql(factoryQuery),
             })
-            .then((ddd) => setGraphLists(ddd.data.factoryContracts))
+            .then((data) => setGraphLists(data.data.factoryContracts))
+            // .then((data) => console.log(data.data.factoryContracts))
+            // .then((data) => console.log(data.data))
 
             .catch((err) => {
                 console.log('Error fetching data: ', err)

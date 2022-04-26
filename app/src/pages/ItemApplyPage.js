@@ -1,33 +1,93 @@
-import { React, useEffect } from "react";
+import { React, useEffect, useState } from "react";
 import { useParams, useNavigate } from 'react-router-dom'
 import { Layout } from 'antd';
 import { Button, Form, FormControl, InputGroup } from "react-bootstrap";
 import { useFormik } from 'formik'
-import { lists } from '../static/staticLists'
 import ButtonRedirect from "../components/atoms/ButtonRedirect";
 import HeaderDobbyLabs from "../components/organisms/HeaderDobbyLabs";
 import FooterDobbyLabs from "../components/organisms/FooterDobbyLabs";
 import HeaderOne from "../components/atoms/HeaderOne";
 import ButtonApply from "../components/atoms/ButtonApply"
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+import useListItems from "../hooks/useListItems"
+import useListAddress from "../hooks/useListAddress"
 
 const AddListPage = () => {
     const { Content } = Layout;
     const navigate = useNavigate();
     const { listname } = useParams();
 
+    const [listNames, setListNames] = useState(Array)
+    // const [listAddress, setListAddress] = useState('')
+
     const handleGoToListMainPage = () => navigate(`/`)
     const handleGoToListPage = () => navigate(`../lists/${listname}`)
     const handleGoToItemsApplicantsPage = () => navigate(`../${listname}/applicants`)
 
+    const APIURL = 'https://api.thegraph.com/subgraphs/name/rabeles11/reviewdao'
 
-    useEffect(() => {
-        const currentListNames = lists.map((num) => { return num.listName })
+    const listAddress = useListAddress({ listname })
+    // const listNames = useListItems({ listAddress })
 
-        if (currentListNames.indexOf(listname) === -1) {
-            alert(`There is no list called ${listname}`)
-            handleGoToListMainPage()
+
+    useEffect(async () => {
+        // console.log(`listNames:`)
+        // console.log(listNames)
+
+
+        console.log(`UseEffect listAddress: ${listAddress}`)
+        if (listAddress.length !== 0) {
+            getListNames(listAddress)
         }
-    })
+
+        // console.log(listNames)
+
+        // if (listNames !== "undefined") {
+        //     console.log(listNames)
+        //     const currentListNames = listNames.map((list) => { return list.name })
+        //     console.log(currentListNames.indexOf(listname))
+
+        //     if (currentListNames.indexOf(listname) === -1) {
+        //         alert(`There is no list called ${listname}`)
+        //         handleGoToListMainPage()
+        //     }
+        // }
+    }, [listAddress])
+
+
+    const getListNames = async (addr) => {
+        console.log(`listAddress: ${addr}`)
+
+        const GET_LISTNAMES_BY_ADDRESS = `
+            query {
+                factoryContracts(first: 5, orderBy: name) {
+                    baseUri
+                    name
+                    newList
+                }
+            }
+        `
+        const client = new ApolloClient({
+            uri: APIURL,
+            cache: new InMemoryCache(),
+        })
+
+        client
+            .query({
+                query: gql(GET_LISTNAMES_BY_ADDRESS),
+                variables: {
+                    address: addr,
+                },
+            })
+            .then((data) => setListNames(data.data.factoryContracts))
+            // .then((data) => console.log(data.data.factoryContracts))
+
+            .catch((err) => {
+                console.log('Error fetching data: ', err)
+            })
+
+        await client.query(GET_LISTNAMES_BY_ADDRESS).toPromise()
+    }
 
     const validateInputs = async (values) => {
         const errors = {};

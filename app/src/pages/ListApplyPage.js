@@ -27,7 +27,6 @@ const ListApplyPage = () => {
     const handleGoToListApplicantsPage = () => navigate(`/list/applicants`)
     const handleGoToListApplicantsPageWithNewApplicant = (listURL) => navigate(`/list/applicants`, { state: { applicantURL: listURL } })
 
-
     const retrieveFile = (e) => {
         const data = e.target.files[0];
         const reader = new window.FileReader();

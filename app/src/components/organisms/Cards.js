@@ -30,9 +30,8 @@ const Cards = ({ data }) => {
 
 
     const navigate = useNavigate();
-    const handleGoToListDetail = () => navigate(`/lists/${selectedListAddress}`, { state: { listname: selectedListName } })
+    const handleGoToListDetail = () => navigate(`/lists/${selectedListName}`, { state: { listAddress: selectedListAddress } })
     // const handleGoToListDetail = () => navigate(`/lists/${selectedListAddress}`)
-
 
 
     return (

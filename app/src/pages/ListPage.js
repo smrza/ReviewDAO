@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { lists } from "../static/staticLists"
 import { Card, Layout } from 'antd';
 import CardsWrapper from '../components/layouts/CardsWrapper';
 import ButtonRedirect from '../components/atoms/ButtonRedirect';
@@ -8,7 +7,9 @@ import HeaderDobbyLabs from '../components/organisms/HeaderDobbyLabs';
 import FooterDobbyLabs from '../components/organisms/FooterDobbyLabs';
 import HeaderOne from '../components/atoms/HeaderOne';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+import { gql as gqlTag } from "graphql-tag"
 
+// import { UseListItems } from "../hooks/useListItemsHook"
 
 const ListPage = () => {
     const { Content } = Layout
@@ -16,39 +17,63 @@ const ListPage = () => {
     const location = useLocation()
 
     const [listItems, setListItems] = useState(Object)
-    const [listName, setListName] = useState(location.state.listname)
-    const { listAddress } = useParams()
+    const [listAddress, setListAddress] = useState(location.state.listAddress)
+    const { listname } = useParams()
 
     const navigate = useNavigate()
 
     const handleGoToMainPage = () => navigate(`/`)
-    const handleGoToItemspplicantsPage = () => navigate(`../${listAddress}/applicants`)
-    const handleGoToItemApplyPage = () => navigate(`../${listAddress}/apply`)
+    const handleGoToItemspplicantsPage = () => navigate(`../${listname}/applicants`)
+    const handleGoToItemApplyPage = () => navigate(`../${listname}/apply`)
 
     const APIURL = 'https://api.thegraph.com/subgraphs/name/rabeles11/reviewdao'
 
     useEffect(() => {
-        console.log(`listAddress: ${listAddress}`)
-
-        if (listName !== '') {
-            console.log(true)
-            handleQuery(listAddress)
-        }
+        // getListAddressByName()
+        getListItems(listAddress)
     }, [])
 
+    // const getListAddressByName = async () => {
+    //     console.log(`getListAddress`)
 
-    const handleQuery = async (addr) => {
-        const tokensQuery = `
-            query($address: Bytes) {
+    //     const GET_LISTADDRESS_BY_NAME = `
+    //         query($name: String!) {
+    //             factoryContracts(where: {name: $name} ) {
+    //                 newList
+    //             }
+    //         }
+    //     `
+    //     const client = new ApolloClient({
+    //         uri: APIURL,
+    //         cache: new InMemoryCache(),
+    //     })
+
+    //     client
+    //         .query({
+    //             query: gql(GET_LISTADDRESS_BY_NAME),
+    //             variables: {
+    //                 name: listname,
+    //             },
+    //         })
+    //         .then((data) => setListAddress(data.data.factoryContracts[0].newList))
+    //         // .then((data) => console.log(data.data.factoryContracts[0].newList))
+
+    //         .catch((err) => {
+    //             console.log('Error fetching data: ', err)
+    //         })
+
+    //     await client.query(GET_LISTADDRESS_BY_NAME).toPromise()
+    // }
+
+    const getListItems = async (addr) => {
+        const GET_LISTITEMS = `
+            query($address: Bytes!) {
                 factoryContracts(where:{newList: $address}){
-                    id
                     name
                     baseUri
                 }
                     listEntities(where:{address: $address}) {
-                    id
                     name
-                    baseUri
                     address
                 }
             }
@@ -61,7 +86,7 @@ const ListPage = () => {
 
         client
             .query({
-                query: gql(tokensQuery),
+                query: gql(GET_LISTITEMS),
                 variables: {
                     address: addr,
                 },
@@ -73,14 +98,15 @@ const ListPage = () => {
                 console.log('Error fetching data: ', err)
             })
 
-        await client.query(tokensQuery).toPromise()
+        await client.query(GET_LISTITEMS).toPromise()
     }
 
     return (
         <Layout>
             <HeaderDobbyLabs />
             <Content className="content">
-                <HeaderOne>List "{listName}"</HeaderOne>
+                <HeaderOne>List "{listname}"</HeaderOne>
+                <HeaderOne>Address "{listAddress}"</HeaderOne>
                 <ButtonRedirect onClick={handleGoToMainPage}>Go back to main page</ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToItemApplyPage} style={{ marginLeft: '30px' }}>Apply new item</ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToItemspplicantsPage} style={{ marginLeft: '30px' }}>Vote for applicants</ButtonRedirect>
@@ -96,7 +122,7 @@ const ListPage = () => {
                                 <Meta title={item.name} description={item.address} />
                             </Card>
                         )
-                        : null
+                        : <p> <b> There is no item for the list "{listname}" yet!  </b></p>
                     }
                 </CardsWrapper>
             </Content>
