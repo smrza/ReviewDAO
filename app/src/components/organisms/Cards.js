@@ -9,12 +9,6 @@ const Cards = ({ data }) => {
     const [selectedListAddress, setSelectedListAddress] = useState('')
     const [selectedListName, setSelectedListName] = useState('')
 
-    // useEffect(() => {
-    //     if (selectedListName !== '') {
-    //         handleGoToListDetail()
-    //     }
-    // })
-
     const handleListSelect = (selectedList) => {
         setSelectedListAddress(selectedList.newList)
         setSelectedListName(selectedList.name)
@@ -27,7 +21,6 @@ const Cards = ({ data }) => {
             handleGoToListDetail()
         }
     })
-
 
     const navigate = useNavigate();
     const handleGoToListDetail = () => navigate(`/lists/${selectedListName}`, { state: { listAddress: selectedListAddress } })

@@ -17,14 +17,14 @@ const ListPage = () => {
     const location = useLocation()
 
     const [listItems, setListItems] = useState(Object)
-    const [listAddress, setListAddress] = useState(location.state.listAddress)
+    const listAddress = location.state.listAddress
     const { listname } = useParams()
 
     const navigate = useNavigate()
 
     const handleGoToMainPage = () => navigate(`/`)
     const handleGoToItemspplicantsPage = () => navigate(`../${listname}/applicants`)
-    const handleGoToItemApplyPage = () => navigate(`../${listname}/apply`)
+    const handleGoToItemApplyPage = () => navigate(`../${listname}/apply`, { state: { listAddress: listAddress } })
 
     const APIURL = 'https://api.thegraph.com/subgraphs/name/rabeles11/reviewdao'
 
