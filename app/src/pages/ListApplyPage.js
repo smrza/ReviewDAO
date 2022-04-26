@@ -56,6 +56,38 @@ const ListApplyPage = () => {
         }
     };
 
+    const validateInputs = async (values) => {
+        const errors = {};
+
+        if (!values.itemName) {
+            errors.itemName = "You have to input the itemName"
+            return errors
+        }
+        else if (values.itemName.includes(",")) {
+            errors.itemName = "Please do not use ',' for your itemName"
+            return errors
+        }
+
+    }
+
+    const formik = useFormik({
+        initialValues: {
+            itemName: "",
+            itemDes: "",
+            itemImg: "",
+            hiddenError: true,
+        },
+        validate: validateInputs,
+        onSubmit: async (values, { resetForm }) => {
+            try {
+                // TODO: submit
+                // TODO: redirect to applicants page
+                resetForm({ values: '' })
+            } catch (e) {
+                alert(e)
+            }
+        }
+    })
 
     return (
         <Layout>
@@ -65,13 +97,45 @@ const ListApplyPage = () => {
                 <ButtonRedirect onClick={handleGoToListMainPage}> Go back to main page </ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToListApplicantsPage}> Show list applicants </ButtonRedirect>
 
-                <form onSubmit={handleSubmit}>
+                {/* <form onSubmit={handleSubmit}>
                     <span> List name: </span>
                     <InputItem type="text" name="listName" placeholder="listName" onChange={e => setListname(e.target.value)} /> <br></br>
                     List description:
                     <InputItem type="text" name="listDes" placeholder="listDes" onChange={e => setListDes(e.target.value)} />  <br></br>
                     <input type="file" name="listImg" onChange={retrieveFile} /> <br></br>
                     <ButtonApply type="submit"> Apply list </ButtonApply>
+                </form> */}
+
+                <form style={{ marginTop: '30px' }} onSubmit={formik.handleSubmit}>
+                    <InputGroup className="mb-4">
+                        <Form.Label><b>List name: </b></Form.Label>
+                        <FormControl
+                            id="itemName"
+                            placeholder="itemName"
+                            onChange={formik.handleChange}
+                            value={formik.values.itemName}
+                        />
+                        {formik.errors.itemName ? <span style={{ color: "red" }}>{formik.errors.itemName}</span> : null}
+                    </InputGroup>
+
+                    <InputGroup className="mb-4">
+                        <Form.Label><b>List description: </b></Form.Label>
+                        <FormControl
+                            id="itemDes"
+                            placeholder="itemDes"
+                            onChange={formik.handleChange}
+                            value={formik.values.itemDes}
+                        />
+                    </InputGroup>
+
+                    <InputGroup className="mb-4">
+                        <Form.Label><b>List img: </b></Form.Label>
+                        <input type="file" name="listImg" onChange={retrieveFile} /> <br></br>
+                    </InputGroup>
+
+                    <ButtonApply type='submit'>
+                        Apply new list
+                    </ButtonApply>
                 </form>
             </Content>
             <FooterDobbyLabs />

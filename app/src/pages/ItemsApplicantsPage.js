@@ -24,6 +24,7 @@ const ItemsApplicantsPage = () => {
 
 
     useEffect(() => {
+        console.log(listname)
         handleApplicantsSelect()
     })
 
@@ -35,8 +36,14 @@ const ItemsApplicantsPage = () => {
             );
         });
 
-        setListApplicants(lists[applicants.indexOf(listname)].applicants);
-        setListApplicantsCopy(listApplicants);
+        if (applicants.indexOf(listname) === -1) {
+            alert(`There is no list called "${listname}"`)
+            handleGoToListMainPage()
+        }
+        else {
+            setListApplicants(lists[applicants.indexOf(listname)].applicants);
+            setListApplicantsCopy(listApplicants);
+        }
     }
 
     // const handleVote = (index) => {

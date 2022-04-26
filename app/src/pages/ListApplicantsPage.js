@@ -8,6 +8,8 @@ import HeaderDobbyLabs from '../components/organisms/HeaderDobbyLabs';
 import FooterDobbyLabs from '../components/organisms/FooterDobbyLabs';
 import { listApplicants } from '../static/listApplicants'
 import HeaderOne from '../components/atoms/HeaderOne';
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+
 
 const ListApplicantsPage = () => {
     const { Content } = Layout;
@@ -15,27 +17,65 @@ const ListApplicantsPage = () => {
     const location = useLocation();
 
     const [applicant, setApplicant] = useState([])
+    const [graphApplicants, setGraphApplicants] = useState(Object)
 
     const navigate = useNavigate();
 
     const handleGoToListMainPage = () => navigate(`/`)
     const handleGoToListApplyPage = () => navigate(`/list/apply`)
 
+    const APIURL = 'https://api.thegraph.com/subgraphs/name/rabeles11/proposallistreviewdao/graphql'
 
     useEffect(() => {
-        if (location.state !== null) {
-            fetch(location.state.applicantURL)
-                .then(res => res.json())
-                .then(
-                    (result) => {
-                        setApplicant(result);
-                    },
-                    (error) => {
-                        console.log(error)
-                    }
-                )
-        }
+        console.log(`listApplicants`)
+
+        // if (location.state !== null) {
+        //     fetch(location.state.applicantURL)
+        //         .then(res => res.json())
+        //         .then(
+        //             (result) => {
+        //                 setApplicant(result);
+        //                 // console.log(result);
+        //             },
+        //             (error) => {
+        //                 console.log(error)
+        //             }
+        //         )
+        // }
+
+        getProposals()
     }, [])
+
+    const getProposals = async () => {
+        const GET_LIST_PROPOSALS = `
+            query{
+                porposalLists{
+                    hash
+                    name
+                    baseUri
+                    creator
+                    votes
+                }
+            }
+        `
+        const client = new ApolloClient({
+            uri: APIURL,
+            cache: new InMemoryCache(),
+        })
+
+        client
+            .query({
+                query: gql(GET_LIST_PROPOSALS),
+            })
+            // .then((data) => setListItems(data.data.listEntities))
+            .then((data) => console.log(data))
+
+            .catch((err) => {
+                console.log('Error fetching data: ', err)
+            })
+
+        await client.query(GET_LIST_PROPOSALS).toPromise()
+    }
 
 
     return (

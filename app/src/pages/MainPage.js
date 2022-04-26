@@ -7,7 +7,6 @@ import HeaderDobbyLabs from "../components/organisms/HeaderDobbyLabs";
 import FooterDobbyLabs from "../components/organisms/FooterDobbyLabs";
 import HeaderOne from "../components/atoms/HeaderOne";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
-import { gql as gqlTag } from "graphql-tag"
 
 
 const MainPage = () => {
@@ -26,7 +25,6 @@ const MainPage = () => {
     }, [])
 
     const getListsFromGraph = async () => {
-        // const factoryQuery = gql`
         const factoryQuery = `
             query {
                 factoryContracts(first: 5, orderBy: name) {
@@ -36,7 +34,6 @@ const MainPage = () => {
                 }
             }
         `
-
         const client = new ApolloClient({
             uri: APIURL,
             cache: new InMemoryCache(),
@@ -48,7 +45,6 @@ const MainPage = () => {
             })
             .then((data) => setGraphLists(data.data.factoryContracts))
             // .then((data) => console.log(data.data.factoryContracts))
-            // .then((data) => console.log(data.data))
 
             .catch((err) => {
                 console.log('Error fetching data: ', err)

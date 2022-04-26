@@ -7,9 +7,7 @@ import HeaderDobbyLabs from '../components/organisms/HeaderDobbyLabs';
 import FooterDobbyLabs from '../components/organisms/FooterDobbyLabs';
 import HeaderOne from '../components/atoms/HeaderOne';
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
-import { gql as gqlTag } from "graphql-tag"
 
-// import { UseListItems } from "../hooks/useListItemsHook"
 
 const ListPage = () => {
     const { Content } = Layout
@@ -24,46 +22,14 @@ const ListPage = () => {
 
     const handleGoToMainPage = () => navigate(`/`)
     const handleGoToItemspplicantsPage = () => navigate(`../${listname}/applicants`)
+    const handleGoToItemspplicantsPageDogs = () => navigate(`../dogs/applicants`)
     const handleGoToItemApplyPage = () => navigate(`../${listname}/apply`, { state: { listAddress: listAddress } })
 
     const APIURL = 'https://api.thegraph.com/subgraphs/name/rabeles11/reviewdao'
 
     useEffect(() => {
-        // getListAddressByName()
         getListItems(listAddress)
     }, [])
-
-    // const getListAddressByName = async () => {
-    //     console.log(`getListAddress`)
-
-    //     const GET_LISTADDRESS_BY_NAME = `
-    //         query($name: String!) {
-    //             factoryContracts(where: {name: $name} ) {
-    //                 newList
-    //             }
-    //         }
-    //     `
-    //     const client = new ApolloClient({
-    //         uri: APIURL,
-    //         cache: new InMemoryCache(),
-    //     })
-
-    //     client
-    //         .query({
-    //             query: gql(GET_LISTADDRESS_BY_NAME),
-    //             variables: {
-    //                 name: listname,
-    //             },
-    //         })
-    //         .then((data) => setListAddress(data.data.factoryContracts[0].newList))
-    //         // .then((data) => console.log(data.data.factoryContracts[0].newList))
-
-    //         .catch((err) => {
-    //             console.log('Error fetching data: ', err)
-    //         })
-
-    //     await client.query(GET_LISTADDRESS_BY_NAME).toPromise()
-    // }
 
     const getListItems = async (addr) => {
         const GET_LISTITEMS = `
@@ -78,7 +44,6 @@ const ListPage = () => {
                 }
             }
         `
-
         const client = new ApolloClient({
             uri: APIURL,
             cache: new InMemoryCache(),
@@ -109,7 +74,7 @@ const ListPage = () => {
                 <HeaderOne>Address "{listAddress}"</HeaderOne>
                 <ButtonRedirect onClick={handleGoToMainPage}>Go back to main page</ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToItemApplyPage} style={{ marginLeft: '30px' }}>Apply new item</ButtonRedirect>
-                <ButtonRedirect onClick={handleGoToItemspplicantsPage} style={{ marginLeft: '30px' }}>Vote for applicants</ButtonRedirect>
+                <ButtonRedirect onClick={handleGoToItemspplicantsPageDogs} style={{ marginLeft: '30px' }}>Vote for applicants</ButtonRedirect>
 
                 <CardsWrapper>
                     {Object.keys(listItems).length > 0 ?

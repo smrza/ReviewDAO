@@ -1,94 +1,70 @@
 import { React, useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { Layout } from 'antd';
-import { Button, Form, FormControl, InputGroup } from "react-bootstrap";
+import { Form, FormControl, InputGroup } from "react-bootstrap";
 import { useFormik } from 'formik'
 import ButtonRedirect from "../components/atoms/ButtonRedirect";
 import HeaderDobbyLabs from "../components/organisms/HeaderDobbyLabs";
 import FooterDobbyLabs from "../components/organisms/FooterDobbyLabs";
+import { Buffer } from "buffer"
+import { create } from "ipfs-http-client";
 import HeaderOne from "../components/atoms/HeaderOne";
 import ButtonApply from "../components/atoms/ButtonApply"
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
-import useListItems from "../hooks/useListItems"
-import useListAddress from "../hooks/useListAddress"
+
+const client = create('https://ipfs.infura.io:5001/api/v0');
+
 
 const AddListPage = () => {
     const { Content } = Layout;
     const navigate = useNavigate();
     const location = useLocation()
 
-    // const [listNames, setListNames] = useState(Array)
+    const [file, setFile] = useState(null);
+    const [listName, setListname] = useState("");
+    const [listDes, setListDes] = useState("");
+
     const listAddress = location.state.listAddress
     const { listname } = useParams();
 
     const handleGoToListMainPage = () => navigate(`/`)
     const handleGoToListPage = () => navigate(`../lists/${listname}`)
     const handleGoToItemsApplicantsPage = () => navigate(`../${listname}/applicants`)
-
-    // const APIURL = 'https://api.thegraph.com/subgraphs/name/rabeles11/reviewdao'
+    const handleGoToListApplicantsPageWithNewApplicant = (listURL) => navigate(`/list/applicants`, { state: { applicantURL: listURL } })
 
 
     useEffect(() => {
         console.log(`listAddress: ${listAddress}`)
     })
 
-    // useEffect(async () => {
-    //     // console.log(`listNames:`)
-    //     // console.log(listNames)
 
-    //     // console.log(`UseEffect listAddress: ${listAddress}`)
-    //     // if (listAddress.length !== 0) {
-    //     //     getListNames(listAddress)
-    //     // }
+    const retrieveFile = (e) => {
+        const data = e.target.files[0];
+        const reader = new window.FileReader();
+        reader.readAsArrayBuffer(data);
+        reader.onloadend = () => {
+            // console.log("Buffer data: ", Buffer(reader.result));
+            setFile(Buffer(reader.result));
+        }
 
-    //     // console.log(listNames)
+        e.preventDefault();
+    }
 
-    //     // if (listNames !== "undefined") {
-    //     //     console.log(listNames)
-    //     //     const currentListNames = listNames.map((list) => { return list.name })
-    //     //     console.log(currentListNames.indexOf(listname))
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const imgIPFS = await client.add(file);
+            const imgURL = `https://ipfs.infura.io/ipfs/${imgIPFS.path}`;
+            console.log(`imgURL: ${imgURL}`)
 
-    //     //     if (currentListNames.indexOf(listname) === -1) {
-    //     //         alert(`There is no list called ${listname}`)
-    //     //         handleGoToListMainPage()
-    //     //     }
-    //     // }
-    // }, [listAddress])
+            const listIPFS = await client.add(`{"listApplicantName": "${listName}", "listApplicantDes": "${listDes}", "listApplicantImg": "${imgURL}"}`);
+            const listURL = `https://ipfs.infura.io/ipfs/${listIPFS.path}`;
+            console.log(`finalURL: ${listURL}`)
+            handleGoToListApplicantsPageWithNewApplicant(listURL)
 
-
-    // const getListNames = async (addr) => {
-    //     console.log(`listAddress: ${addr}`)
-
-    //     const GET_LISTNAMES_BY_ADDRESS = `
-    //         query {
-    //             factoryContracts(first: 5, orderBy: name) {
-    //                 baseUri
-    //                 name
-    //                 newList
-    //             }
-    //         }
-    //     `
-    //     const client = new ApolloClient({
-    //         uri: APIURL,
-    //         cache: new InMemoryCache(),
-    //     })
-
-    //     client
-    //         .query({
-    //             query: gql(GET_LISTNAMES_BY_ADDRESS),
-    //             variables: {
-    //                 address: addr,
-    //             },
-    //         })
-    //         .then((data) => setListNames(data.data.factoryContracts))
-    //         // .then((data) => console.log(data.data.factoryContracts))
-
-    //         .catch((err) => {
-    //             console.log('Error fetching data: ', err)
-    //         })
-
-    //     await client.query(GET_LISTNAMES_BY_ADDRESS).toPromise()
-    // }
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
 
     const validateInputs = async (values) => {
         const errors = {};
@@ -163,6 +139,9 @@ const AddListPage = () => {
                             value={formik.values.itemURL}
                         />
                     </InputGroup>
+
+                    <input type="file" name="listImg" onChange={retrieveFile} /> <br></br>
+
 
 
                     <ButtonApply type='submit'>
