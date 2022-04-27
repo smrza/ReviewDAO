@@ -9,10 +9,11 @@ Graph is done for one list. The plan is to implement all lists and proposals.
 IPFS is implemented for storing images and descriptions. The plan is to store the baseUri in the DAO contracts.
 
 ## Contracts @ Kovan testnet
-* ReviewDaoToken: 0x1C97173084380aC67d526d04a84EDCa855BfC13F
-* RDNFT: 0x0D3d152EA1De373D47D65Bc2a4d15dCb97710360
-* ReviewDaoListFactory: 0x147be49A5788ddB15ca3EcEBd3C143c01f14634D
-* ReviewDao: 0x1399992b9592E6602090F540e058c93103cCB38E
+* ReviewDaoToken: 0xA38f6b39BC3CECC08ee0e245041226713d7a30c1
+* RDNFT: 0x77F110D1B0Cbb67355688FA44a7D742b59013655
+* ReviewDaoListFactory: 0x45f0b394E775672547C57a8B16d4A23936d4afbd
+* ReviewDao: 0x22d529c84b18199239816fe6f528fd924345a4b7
 
 ## Graph
-https://thegraph.com/hosted-service/subgraph/rabeles11/daohackatonetherlisting?selected=playground
+https://api.thegraph.com/subgraphs/name/rabeles11/reviewdaolive
+https://api.thegraph.com/subgraphs/name/rabeles11/proposallistreviewdaolive
