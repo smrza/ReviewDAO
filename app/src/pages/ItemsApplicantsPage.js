@@ -24,7 +24,6 @@ const ItemsApplicantsPage = () => {
 
 
     useEffect(() => {
-        console.log(listname)
         handleApplicantsSelect()
     })
 

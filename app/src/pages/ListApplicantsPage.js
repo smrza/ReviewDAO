@@ -29,53 +29,53 @@ const ListApplicantsPage = () => {
     useEffect(() => {
         console.log(`listApplicants`)
 
-        // if (location.state !== null) {
-        //     fetch(location.state.applicantURL)
-        //         .then(res => res.json())
-        //         .then(
-        //             (result) => {
-        //                 setApplicant(result);
-        //                 // console.log(result);
-        //             },
-        //             (error) => {
-        //                 console.log(error)
-        //             }
-        //         )
-        // }
+        if (location.state !== null) {
+            fetch(location.state.applicantURL)
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        setApplicant(result);
+                        // console.log(result);
+                    },
+                    (error) => {
+                        console.log(error)
+                    }
+                )
+        }
 
-        getProposals()
+        // getProposals()
     }, [])
 
-    const getProposals = async () => {
-        const GET_LIST_PROPOSALS = `
-            query{
-                porposalLists{
-                    hash
-                    name
-                    baseUri
-                    creator
-                    votes
-                }
-            }
-        `
-        const client = new ApolloClient({
-            uri: APIURL,
-            cache: new InMemoryCache(),
-        })
+    // const getProposals = async () => {
+    //     const GET_LIST_PROPOSALS = `
+    //         query{
+    //             porposalLists{
+    //                 hash
+    //                 name
+    //                 baseUri
+    //                 creator
+    //                 votes
+    //             }
+    //         }
+    //     `
+    //     const client = new ApolloClient({
+    //         uri: APIURL,
+    //         cache: new InMemoryCache(),
+    //     })
 
-        client
-            .query({
-                query: gql(GET_LIST_PROPOSALS),
-            })
-            // .then((data) => setListItems(data.data.listEntities))
-            .then((data) => console.log(data))
+    //     client
+    //         .query({
+    //             query: gql(GET_LIST_PROPOSALS),
+    //         })
+    //         // .then((data) => setListItems(data.data.listEntities))
+    //         .then((data) => console.log(data))
 
-            .catch((err) => {
-                console.log('Error fetching data: ', err)
-            })
+    //         .catch((err) => {
+    //             console.log('Error fetching data: ', err)
+    //         })
 
-        await client.query(GET_LIST_PROPOSALS).toPromise()
-    }
+    //     await client.query(GET_LIST_PROPOSALS).toPromise()
+    // }
 
 
     return (

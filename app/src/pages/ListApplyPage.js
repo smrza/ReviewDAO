@@ -64,7 +64,7 @@ const ListApplyPage = () => {
             return errors
         }
         else if (values.itemName.includes(",")) {
-            errors.itemName = "Please do not use ',' for your itemName"
+            errors.itemName = "Please do not use ',' to your itemName"
             return errors
         }
 
@@ -97,16 +97,16 @@ const ListApplyPage = () => {
                 <ButtonRedirect onClick={handleGoToListMainPage}> Go back to main page </ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToListApplicantsPage}> Show list applicants </ButtonRedirect>
 
-                {/* <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit}>
                     <span> List name: </span>
                     <InputItem type="text" name="listName" placeholder="listName" onChange={e => setListname(e.target.value)} /> <br></br>
                     List description:
                     <InputItem type="text" name="listDes" placeholder="listDes" onChange={e => setListDes(e.target.value)} />  <br></br>
                     <input type="file" name="listImg" onChange={retrieveFile} /> <br></br>
                     <ButtonApply type="submit"> Apply list </ButtonApply>
-                </form> */}
+                </form>
 
-                <form style={{ marginTop: '30px' }} onSubmit={formik.handleSubmit}>
+                {/* <form style={{ marginTop: '30px' }} onSubmit={formik.handleSubmit}>
                     <InputGroup className="mb-4">
                         <Form.Label><b>List name: </b></Form.Label>
                         <FormControl
@@ -136,7 +136,7 @@ const ListApplyPage = () => {
                     <ButtonApply type='submit'>
                         Apply new list
                     </ButtonApply>
-                </form>
+                </form> */}
             </Content>
             <FooterDobbyLabs />
         </Layout>

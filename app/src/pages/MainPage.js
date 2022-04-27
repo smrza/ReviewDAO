@@ -7,9 +7,12 @@ import HeaderDobbyLabs from "../components/organisms/HeaderDobbyLabs";
 import FooterDobbyLabs from "../components/organisms/FooterDobbyLabs";
 import HeaderOne from "../components/atoms/HeaderOne";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
-
+import ReviewDAOListFactoryABI from "../contracts/abis/ReviewDAOListFactoryABI"
+// import Web3 from "web3";
 
 const MainPage = () => {
+    const CONTRACT_ADDRESS = '0x45f0b394E775672547C57a8B16d4A23936d4afbd';
+
     const { Content } = Layout
     const navigate = useNavigate()
 
@@ -22,7 +25,20 @@ const MainPage = () => {
 
     useEffect(() => {
         getListsFromGraph()
+        console.log(ReviewDAOListFactoryABI)
+        console.log(window)
+        // console.log(window.Web3)
+        // getABI()
     }, [])
+
+    // const getABI = () => {
+    //     const contractListFactory = new Web3.eth.Contract(
+    //         ReviewDAOListFactoryABI,
+    //         CONTRACT_ADDRESS
+    //     );
+
+    //     console.log(contractListFactory)
+    // }
 
     const getListsFromGraph = async () => {
         const factoryQuery = `
