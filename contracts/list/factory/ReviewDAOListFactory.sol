@@ -11,6 +11,7 @@ contract ReviewDAOListFactory is IReviewDAOListFactory {
     ReviewDAOList[] private _lists;
     mapping(bytes32 => uint256) _listsIds;
 
+    //TODO accessibility
     function createList(
         bytes32 nameHash_,
         string memory name_,
