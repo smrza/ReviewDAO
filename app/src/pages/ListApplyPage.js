@@ -11,11 +11,142 @@ import { create } from "ipfs-http-client";
 import ButtonApply from "../components/atoms/ButtonApply";
 import InputItem from "../components/atoms/InputItem";
 import HeaderOne from "../components/atoms/HeaderOne";
+import { ethers } from "ethers";
+import sha256 from "js-sha256"
+
 
 const client = create('https://ipfs.infura.io:5001/api/v0');
 
 
 const ListApplyPage = () => {
+
+    const ABI = [
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "newList",
+                    "type": "address"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "bytes32",
+                    "name": "hash",
+                    "type": "bytes32"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "name",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "baseUri",
+                    "type": "string"
+                }
+            ],
+            "name": "_NewList",
+            "type": "event"
+        },
+        {
+            "inputs": [],
+            "name": "allLists",
+            "outputs": [
+                {
+                    "internalType": "contract ReviewDAOList[]",
+                    "name": "",
+                    "type": "address[]"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "bytes32",
+                    "name": "nameHash_",
+                    "type": "bytes32"
+                },
+                {
+                    "internalType": "string",
+                    "name": "name_",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "baseUri_",
+                    "type": "string"
+                },
+                {
+                    "internalType": "address",
+                    "name": "creator_",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "token_",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "ReviewDAO_",
+                    "type": "address"
+                }
+            ],
+            "name": "createList",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "bytes32",
+                    "name": "nameHash_",
+                    "type": "bytes32"
+                }
+            ],
+            "name": "getList",
+            "outputs": [
+                {
+                    "internalType": "contract ReviewDAOList",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "bytes32",
+                    "name": "nameHash_",
+                    "type": "bytes32"
+                }
+            ],
+            "name": "getListAddress",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ]
+
+    const CONTRACT_ADDRESS = '0xb86d6edbc400De3fc87557D97A68461b104b94C1';
+    const tokenAddress = '0xd0715b566044Fe48C0CC0B435C0072609Ea157bb';
+    const ReviewDAOAddress = '0x99beDEDB0501ae930CE14AADe1c327D45Bd315a7';
+
     const { Content } = Layout;
     const navigate = useNavigate();
 
@@ -26,6 +157,11 @@ const ListApplyPage = () => {
     const handleGoToListMainPage = () => navigate(`/`)
     const handleGoToListApplicantsPage = () => navigate(`/list/applicants`)
     const handleGoToListApplicantsPageWithNewApplicant = (listURL) => navigate(`/list/applicants`, { state: { applicantURL: listURL } })
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const signer = provider.getSigner()
+    const contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+
 
     const retrieveFile = (e) => {
         const data = e.target.files[0];
@@ -49,7 +185,19 @@ const ListApplyPage = () => {
             const listIPFS = await client.add(`{"listApplicantName": "${listName}", "listApplicantDes": "${listDes}", "listApplicantImg": "${imgURL}"}`);
             const listURL = `https://ipfs.infura.io/ipfs/${listIPFS.path}`;
             console.log(`finalURL: ${listURL}`)
-            handleGoToListApplicantsPageWithNewApplicant(listURL)
+            console.log(contract)
+            console.log(listName)
+            console.log(`0x${sha256(listName)}`)
+            console.log(imgURL)
+            console.log("0xc1cce50ee4b87ed2d4581d3d81aa37b45dcff49f")
+
+            contract.createList(`0x${sha256(listName)}`, listName, imgURL,
+                "0xc1cce50ee4b87ed2d4581d3d81aa37b45dcff49f",   // creator - walletAddress 
+                tokenAddress,
+                ReviewDAOAddress
+            )
+
+            // handleGoToListApplicantsPageWithNewApplicant(listURL)
 
         } catch (error) {
             console.log(error.message);
@@ -100,8 +248,8 @@ const ListApplyPage = () => {
                 <form onSubmit={handleSubmit}>
                     <span> List name: </span>
                     <InputItem type="text" name="listName" placeholder="listName" onChange={e => setListname(e.target.value)} /> <br></br>
-                    List description:
-                    <InputItem type="text" name="listDes" placeholder="listDes" onChange={e => setListDes(e.target.value)} />  <br></br>
+
+                    <span> List image: </span>
                     <input type="file" name="listImg" onChange={retrieveFile} /> <br></br>
                     <ButtonApply type="submit"> Apply list </ButtonApply>
                 </form>

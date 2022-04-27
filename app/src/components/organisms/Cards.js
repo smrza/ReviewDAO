@@ -33,7 +33,7 @@ const Cards = ({ data }) => {
                 <Card
                     key={index}
                     style={{ color: 'white', margin: '1rem', padding: '1rem', width: '20%', backgroundColor: 'lightgray', color: '#001529', border: '1px solid black', cursor: 'pointer' }}
-                    cover={<img alt="listImg" src={list.listImg} width="100%" />}
+                    cover={<img alt="listImg" src={list.baseUri} width="100%" />}
                     onClick={() => handleListSelect(list)}
                 >
                     <Meta title={list.name} description={list.stake} />
