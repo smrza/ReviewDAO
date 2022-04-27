@@ -41,6 +41,7 @@ const ListPage = () => {
                     listEntities(where:{address: $address}) {
                     name
                     address
+                    baseUri
                 }
             }
         `
@@ -71,7 +72,6 @@ const ListPage = () => {
             <HeaderDobbyLabs />
             <Content className="content">
                 <HeaderOne>List "{listname}"</HeaderOne>
-                <HeaderOne>Address "{listAddress}"</HeaderOne>
                 <ButtonRedirect onClick={handleGoToMainPage}>Go back to main page</ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToItemApplyPage} style={{ marginLeft: '30px' }}>Apply new item</ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToItemspplicantsPageDogs} style={{ marginLeft: '30px' }}>Vote for applicants</ButtonRedirect>
@@ -82,7 +82,7 @@ const ListPage = () => {
                             <Card
                                 key={index}
                                 style={{ margin: '1rem', padding: '1rem', width: '20%', backgroundColor: 'lightgray', border: '1px solid black' }}
-                                cover={<img alt="listImg" src={item.itemImg} style={{ width: '100%' }} />}
+                                cover={<img alt="listImg" src={item.baseUri} style={{ width: '100%' }} />}
                             >
                                 <Meta title={item.name} description={item.address} />
                             </Card>

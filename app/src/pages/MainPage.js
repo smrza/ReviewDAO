@@ -141,49 +141,35 @@ const MainPage = () => {
 
     const CONTRACT_ADDRESS = '0xb86d6edbc400De3fc87557D97A68461b104b94C1';
     const [contract, setContract] = useState(null);
-    const [provider, setProvider] = useState(null);
-    const [signer, setSigner] = useState(null);
 
     const [graphLists, setGraphLists] = useState(Object)
 
     const handleGoToListApplyPage = () => navigate(`/list/apply`)
     const handleGoToListApplicantsPage = () => navigate(`/list/applicants`)
 
-    const APIURL = 'https://api.thegraph.com/subgraphs/name/rabeles11/reviewdao'
+    // const APIURL = 'https://api.thegraph.com/subgraphs/name/rabeles11/reviewdao'
+    const APIURL = 'https://api.thegraph.com/subgraphs/name/rabeles11/reviewdaolive'
 
-    // const provider = window.ethereum
-    // const Web3 = new web3(provider)
+    // const updateEthers = () => {
+    //     const tempProvider = new ethers.providers.Web3Provider(window.ethereum);
+    //     const tempSigner = tempProvider.getSigner();
+    //     const tempContract = new ethers.Contract(CONTRACT_ADDRESS, ABI, tempSigner);
+    //     console.log(tempContract)
+    // }
 
-    // const contractListFactory = new Web3.eth.Contract(
-    //     ListFactoryABI,
-    //     CONTRACT_ADDRESS
-    // );
-
-    const updateEthers = () => {
-        let tempProvider = new ethers.providers.Web3Provider(window.ethereum);
-        setProvider(tempProvider);
-
-        let tempSigner = tempProvider.getSigner();
-        setSigner(tempSigner);
-
-        let tempContract = new ethers.Contract(CONTRACT_ADDRESS, ABI, tempSigner);
-        setContract(tempContract);
-        console.log(tempContract)
-    }
-
-    const showList = async () => {
-        let list = await contract.allLists()
-        console.log(list)
-    }
+    // const showList = async () => {
+    //     let list = await contract.allLists()
+    //     console.log(list)
+    // }
 
     useEffect(() => {
-        getListsFromGraph()
+        getListsGraph()
         //console.log(contract.allLists())
         // updateEthers()
         // console.log(contractListFactory)
     }, [])
 
-    const getListsFromGraph = async () => {
+    const getListsGraph = async () => {
         const factoryQuery = `
             query {
                 factoryContracts(first: 5, orderBy: name) {
@@ -220,9 +206,8 @@ const MainPage = () => {
 
                 <ButtonRedirect onClick={handleGoToListApplyPage}>Apply new list</ButtonRedirect>
                 <ButtonRedirect onClick={handleGoToListApplicantsPage}>Show list applicants</ButtonRedirect>
-                {/* <ButtonRedirect> Add winner list </ButtonRedirect> */}
-                <ButtonRedirect onClick={updateEthers}> Update ethers </ButtonRedirect>
-                <ButtonRedirect onClick={showList}> showList </ButtonRedirect>
+                {/* <ButtonRedirect onClick={updateEthers}> Update ethers </ButtonRedirect> */}
+                {/* <ButtonRedirect onClick={showList}> showList </ButtonRedirect> */}
                 {Object.keys(graphLists).length > 0 ?
                     <Cards data={graphLists}></Cards>
                     : null

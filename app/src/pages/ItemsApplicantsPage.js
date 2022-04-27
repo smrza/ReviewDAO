@@ -77,7 +77,9 @@ const ItemsApplicantsPage = () => {
                         >
                             <Meta title={applicant.applicantName} description={applicant.applicantDes} />
                             {/* <button onClick={handleVote(index)}>Challenge</button> */}
-
+                            {
+                                <button>Challenge</button>
+                            }
                             {/* {applicant.applicantChallenged === "false" ?
                                 <button onClick={handleVote(index)}>Challenge</button>
                                 :
