@@ -1,0 +1,73 @@
+{
+  listEntities(where:{address:"0xb86d6edbc400de3fc87557d97a68461b104b94c1"}) {
+    id
+    name
+    uri
+    whitelisted
+  }
+}
+
+
+ReviewDAOTOken -> https://kovan.etherscan.io/tx/0x07303c1b4471fd6f058e929505d3ad84042e6fc6022ade57e059fecc8f04284b
+NFT -> https://kovan.etherscan.io/tx/0xe9f3704ceb557b87c08d15e6242a749568691eff60572da1396f23f8caff4938
+ReviewDaoListFactory -> https://kovan.etherscan.io/tx/0x04350fae0c3b510f2f53bd0f91a7bba0a5e71c747e83ef992d9585e447f8692c
+ReviewDAO -> https://kovan.etherscan.io/tx/0x99d139bcf81e87a46282296afc4009f03917629007436052ab9ae8c290fcf0aa
+
+
+
+https://api.thegraph.com/subgraphs/name/rabeles11/reviewdaolive
+https://api.thegraph.com/subgraphs/name/rabeles11/proposallistreviewdaolive
+
+
+
+
+
+
+
+{
+  listEntities(where:{address:"0xCcD42CC3E49eF0317Bc41047b107A8D45819389e"}) {
+    id
+    name
+    uri
+    address
+    whitelisted
+  }
+}
+
+
+{
+    listEntities(where:{address:"0x181425Eae6ec1007b7f95F4ABF85DdCDbD47040E"}) {
+    id
+    name
+    uri
+    address
+    whitelisted
+  }
+}
+
+
+
+
+{
+  factoryContracts(where:{newList:"0xCcD42CC3E49eF0317Bc41047b107A8D45819389e"}){
+    id
+    name
+    baseUri
+  }
+    listEntities(where:{address:"0xCcD42CC3E49eF0317Bc41047b107A8D45819389e"}) {
+    id
+    name
+    baseUri
+    address
+    whitelisted
+    challengeId
+    challenged
+    challengerReward
+    creator
+    stake
+    statusId
+    timer
+  }
+}
+
+

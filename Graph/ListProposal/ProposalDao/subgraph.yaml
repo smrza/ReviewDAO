@@ -1,0 +1,30 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ReviewDAO
+    network: kovan
+    source:
+      address: "0x3c4f76553b505f16322d0207850e5f77e407929c"
+      abi: ReviewDAO
+      startBlock: 31274305 
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - _NewListCreated
+        - _NewProposal
+        - _ProposalModified
+      abis:
+        - name: ReviewDAO
+          file: ./abis/ReviewDAO.json
+      eventHandlers:
+        - event: _NewListCreated(indexed bytes32,address)
+          handler: handle_NewListCreated
+        - event: _NewProposal(indexed bytes32,string,string,address,uint256)
+          handler: handle_NewProposal
+        - event: _ProposalModified(indexed bytes32,string,uint256)
+          handler: handle_ProposalModified
+      file: ./src/mapping.ts
