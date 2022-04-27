@@ -681,9 +681,9 @@ const ListPage = () => {
         console.log(id)
         console.log(address)
         const NewList = new ethers.Contract(address, ListItemsABI, signer)
-        console.log(NewList)
-
+        await NewList.challangeListing(id)
       }
+      
     return (
         <Layout>
             <HeaderDobbyLabs />
