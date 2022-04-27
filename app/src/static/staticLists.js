@@ -1,6 +1,6 @@
 export const lists = [
     {
-        listName: "dog",
+        listName: "dogs",
         listDes: "hairy ones",
         listImg: "https://images.pexels.com/photos/2253275/pexels-photo-2253275.jpeg",
         items: [

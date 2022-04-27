@@ -35,8 +35,14 @@ const ItemsApplicantsPage = () => {
             );
         });
 
-        setListApplicants(lists[applicants.indexOf(listname)].applicants);
-        setListApplicantsCopy(listApplicants);
+        if (applicants.indexOf(listname) === -1) {
+            alert(`There is no list called "${listname}"`)
+            handleGoToListMainPage()
+        }
+        else {
+            setListApplicants(lists[applicants.indexOf(listname)].applicants);
+            setListApplicantsCopy(listApplicants);
+        }
     }
 
     // const handleVote = (index) => {
@@ -71,7 +77,9 @@ const ItemsApplicantsPage = () => {
                         >
                             <Meta title={applicant.applicantName} description={applicant.applicantDes} />
                             {/* <button onClick={handleVote(index)}>Challenge</button> */}
-
+                            {
+                                <button>Challenge</button>
+                            }
                             {/* {applicant.applicantChallenged === "false" ?
                                 <button onClick={handleVote(index)}>Challenge</button>
                                 :
