@@ -1428,8 +1428,8 @@ const AddListPage = () => {
     const handleGoToItemsApplicantsPage = () => navigate(`../${listname}/applicants`)
     const handleGoToListApplicantsPageWithNewApplicant = (listURL) => navigate(`/list/applicants`, { state: { applicantURL: listURL } })
 
-    const ReviewDAOAddress = '0x99beDEDB0501ae930CE14AADe1c327D45Bd315a7';
-    const tokenAddress = '0xd0715b566044Fe48C0CC0B435C0072609Ea157bb';
+    const ReviewDAOAddress = '0x22d529c84b18199239816fe6f528fd924345a4b7';
+    const tokenAddress = '0xA38f6b39BC3CECC08ee0e245041226713d7a30c1';
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner()
@@ -1475,7 +1475,8 @@ const AddListPage = () => {
             const listinPrice = parseInt(rDAO._hex, 16) * 3
             console.log(listinPrice)
             console.log(tokenContract)
-            const balance = await tokenContract.balanceOf("0xc1cce50ee4b87ed2d4581d3d81aa37b45dcff49f")
+            console.log(signer)
+            const balance = await tokenContract.balanceOf("0xDd7824e53906ECFcE591aBb56aa66e390cE50078")
             //console.log(await tokenContract.name())
             console.log(parseInt(balance._hex, 16))
 

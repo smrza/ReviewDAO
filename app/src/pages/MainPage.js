@@ -139,7 +139,7 @@ const MainPage = () => {
     const { Content } = Layout
     const navigate = useNavigate()
 
-    const CONTRACT_ADDRESS = '0xb86d6edbc400De3fc87557D97A68461b104b94C1';
+    const Factory_CONTRACT_ADDRESS = '0x45f0b394E775672547C57a8B16d4A23936d4afbd';
     const [contract, setContract] = useState(null);
 
     const [graphLists, setGraphLists] = useState(Object)

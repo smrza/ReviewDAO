@@ -420,9 +420,9 @@ const ListApplyPage = () => {
         }
     ]
 
-    const CONTRACT_ADDRESS = '0xb86d6edbc400De3fc87557D97A68461b104b94C1';
-    const tokenAddress = '0x82D4C660C2E3b59b1bEBA7f433CBB604adD831A6';
-    const ReviewDAOAddress = '0x99beDEDB0501ae930CE14AADe1c327D45Bd315a7';
+    const factory_CONTRACT_ADDRESS = '0x45f0b394E775672547C57a8B16d4A23936d4afbd';
+    const tokenAddress = '0xA38f6b39BC3CECC08ee0e245041226713d7a30c1';
+    const ReviewDAOAddress = '0x22d529c84b18199239816fe6f528fd924345a4b7';
 
     const { Content } = Layout;
     const navigate = useNavigate();
@@ -437,7 +437,7 @@ const ListApplyPage = () => {
 
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const signer = provider.getSigner()
-    const factoryContract = new ethers.Contract(CONTRACT_ADDRESS, factoryContractABI, signer);
+    const factoryContract = new ethers.Contract(factory_CONTRACT_ADDRESS, factoryContractABI, signer);
     const reviewDAOContract = new ethers.Contract(ReviewDAOAddress, reviewDAOABI, signer)
 
 
@@ -467,7 +467,6 @@ const ListApplyPage = () => {
             console.log(listName)
             console.log(`0x${sha256(listName)}`)
             console.log(imgURL)
-            console.log("0xc1cce50ee4b87ed2d4581d3d81aa37b45dcff49f")
 
             // console.log(ReviewDAOABIfile)
 
@@ -477,9 +476,9 @@ const ListApplyPage = () => {
             //     ReviewDAOAddress
             // )
 
-            // await reviewDAOContract.proposeNewList(`0x${sha256(listName)}`, listName, imgURL)
+            await reviewDAOContract.proposeNewList(`0x${sha256(listName)}`, listName, imgURL)
 
-            // handleGoToListApplicantsPageWithNewApplicant(listURL)
+            //handleGoToListApplicantsPageWithNewApplicant(listURL)
 
         } catch (error) {
             console.log(error.message);
