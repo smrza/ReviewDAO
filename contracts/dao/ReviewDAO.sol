@@ -64,13 +64,14 @@ contract ReviewDAO is ReviewDAOSettings {
         require(!listProposed[hash_], "List already proposed.");
         uint256 token;
         bool proceed;
-        for(uint i = 0; i < _NFT.totalSupply(); i++){
+        uint256 limit = _NFT.balanceOf(msg.sender);
+        for(uint i = 0; i < limit; i++){
             uint256 lastToken = getNextTokenId(msg.sender, i);
             if(recentProposal[lastToken] < block.timestamp){
                 proceed = true;
                 token = lastToken;
+                break;
             }
-            i = lastToken;
         }
         require(proceed, "No token to vote with.");
         listProposals[hash_].name = name_;
@@ -86,13 +87,14 @@ contract ReviewDAO is ReviewDAOSettings {
         require(listProposed[hash_], "List does not exist.");
         uint256 token;
         bool proceed;
-        for(uint i = 0; i < _NFT.totalSupply(); i++){
+        uint256 limit = _NFT.balanceOf(msg.sender)
+        for(uint i = 0; i < limit; i++){
             uint256 lastToken = getNextTokenId(msg.sender, i);
             if(recentVote[lastToken] < block.timestamp){
                 proceed = true;
                 token = lastToken;
+                break;
             }
-            i = lastToken;
         }
         require(proceed, "No token to vote with.");
         recentVote[token] = voteWaitingPeriod;
