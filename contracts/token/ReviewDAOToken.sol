@@ -8,9 +8,9 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 
 contract ReviewDAOToken is ERC20, Ownable, ReentrancyGuard {
-    uint64 public MAX_INITIAL_LIQUIDITY = 10000000;
-    uint64 public MAX_TEAM_GET = 20000000;
-    uint64 public MAX_ECOSYSTEM_GET = 60000000;
+    uint64 public MAX_INITIAL_LIQUIDITY = 10000000e18;
+    uint64 public MAX_TEAM_GET = 20000000e18;
+    uint64 public MAX_ECOSYSTEM_GET = 60000000e18;
     uint256 public constant PRICE_PER_TOKEN = 0.1 ether;
     bool public liquidityMinted = false;
     bool public teamMinted = false;
