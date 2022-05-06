@@ -5,8 +5,8 @@ Project for Encode DAO Hack.
 Project still in progress.
 
 Contracts done 90%.
-Graph is done for one list. The plan is to implement all lists and proposals.
-IPFS is implemented for storing images and descriptions. The plan is to store the baseUri in the DAO contracts.
+Graph expanded to fit the contracts
+IPFS is implemented for storing images and descriptions.
 
 ## Contracts @ Kovan testnet
 * ReviewDaoToken: 0xA38f6b39BC3CECC08ee0e245041226713d7a30c1
